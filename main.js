@@ -99,7 +99,13 @@ const renderHistory = () => {
   historyData.forEach((item, index) => {
     const card = document.createElement('div');
     card.className = 'history-card';
-    card.innerHTML = `<h4>${item.type === 'search' ? '🔍 Search' : (item.type === 'evaluate' ? '⚖️ Eval' : '📝 Answer')}</h4><p><strong>Q:</strong> ${item.query}</p>`;
+    let icon = '📝';
+    let title = 'Answer';
+    if (item.type === 'search') { icon = '🔍'; title = 'Search'; }
+    else if (item.type === 'evaluate') { icon = '⚖️'; title = 'Eval'; }
+    else if (item.type === 'decode') { icon = '📖'; title = 'Decoder'; }
+    
+    card.innerHTML = `<h4>${icon} ${title}</h4><p><strong>Q:</strong> ${item.query}</p>`;
     card.addEventListener('click', () => loadHistoryItem(index));
     historyList.appendChild(card);
   });
@@ -121,6 +127,13 @@ const loadHistoryItem = (index) => {
   } else if (item.type === 'evaluate') {
     document.querySelector('[data-tab="tab-evaluator"]').click();
     renderScorecard(JSON.parse(item.answer));
+  } else if (item.type === 'decode') {
+    document.querySelector('[data-tab="tab-decoder"]').click();
+    if(item.statute) document.getElementById('decode-statute').value = item.statute;
+    document.getElementById('decode-section').value = item.query;
+    document.getElementById('decodeOutputContent').innerHTML = marked.parse(item.answer);
+    document.getElementById('decodeOutputSection').classList.remove('hidden');
+    currentDecoderMarkdown = item.answer;
   }
 };
 
@@ -455,4 +468,66 @@ if(openDevBtn) openDevBtn.addEventListener('click', openDevModal);
 if(closeDevBtn) closeDevBtn.addEventListener('click', closeDevModal);
 if(devOverlay) devOverlay.addEventListener('click', (e) => {
   if (e.target === devOverlay) closeDevModal();
+});
+
+// -----------------------------------------------------------------------------
+// Bare Act Decoder Logic
+// -----------------------------------------------------------------------------
+let currentDecoderMarkdown = '';
+
+document.getElementById('decodeBtn')?.addEventListener('click', async () => {
+  const statute = document.getElementById('decode-statute').value;
+  const section = document.getElementById('decode-section').value.trim();
+  const rawText = document.getElementById('decode-raw').value.trim();
+
+  if (!section) return showToast('Please enter a section number.');
+
+  const btn = document.getElementById('decodeBtn');
+  btn.disabled = true;
+  document.getElementById('decodeBtnText').textContent = 'Decoding...';
+  document.getElementById('decodeOutputSection').classList.remove('hidden');
+  document.getElementById('decodeOutputContent').classList.add('hidden');
+  document.getElementById('decodeSkeletonLoader').classList.remove('hidden');
+
+  try {
+    const res = await fetch('/api/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'decode', statute, section, rawText })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+
+    currentDecoderMarkdown = data.answer;
+    document.getElementById('decodeOutputContent').innerHTML = marked.parse(data.answer);
+    saveToHistory({ type: 'decode', query: section, statute: statute, answer: data.answer, timestamp: Date.now() });
+  } catch (error) {
+    showToast(`Error: ${error.message}`);
+    document.getElementById('decodeOutputSection').classList.add('hidden');
+  } finally {
+    btn.disabled = false;
+    document.getElementById('decodeBtnText').textContent = 'Decode Section';
+    document.getElementById('decodeSkeletonLoader').classList.add('hidden');
+    document.getElementById('decodeOutputContent').classList.remove('hidden');
+  }
+});
+
+// Decoder Action Buttons
+document.getElementById('decodeCopyBtn')?.addEventListener('click', async () => {
+  if (!currentDecoderMarkdown) return;
+  const attribution = "\n\n---\n*Decoded via CU Law Exam Engine | Designed by Debdipta Goswami*";
+  try { await navigator.clipboard.writeText(currentDecoderMarkdown + attribution); showToast('Breakdown copied!'); } catch (err) {}
+});
+
+let isDecoderSpeaking = false;
+document.getElementById('decodeReadAloudBtn')?.addEventListener('click', () => {
+  if (!('speechSynthesis' in window)) return showToast('Text-to-speech not supported.');
+  if (isDecoderSpeaking) { window.speechSynthesis.cancel(); isDecoderSpeaking = false; return showToast('Audio stopped.'); }
+  const text = document.getElementById('decodeOutputContent').innerText;
+  if (!text.trim()) return;
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.onend = () => { isDecoderSpeaking = false; };
+  window.speechSynthesis.speak(utt);
+  isDecoderSpeaking = true;
+  showToast('Reading breakdown aloud...');
 });

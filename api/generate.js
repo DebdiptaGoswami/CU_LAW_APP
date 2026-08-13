@@ -87,6 +87,42 @@ STRICT RULES:
       
       result = await model.generateContent(prompt);
 
+    } else if (type === 'decode') {
+      const { section, rawText, statute } = req.body;
+      if (!section) return res.status(400).json({ error: 'Section is required for decoding.' });
+      
+      prompt = `You are an expert legal educator and Indian Law Professor.
+Your task is to provide a thorough, plain-English breakdown of the statutory section provided below.
+
+Statute Context: ${statute}
+Section: ${section}
+${rawText ? `Raw Text of Section:\n"${rawText}"\n` : ''}
+
+You MUST generate a highly structured Markdown breakdown adhering STRICTLY to the following sections and emojis:
+
+### 📖 Plain English Translation (Comprehensive Overview)
+Explain the section in simple, crystal-clear, everyday language as if explaining it to a beginner. Avoid dense legalese here.
+
+### 🧩 Essential Ingredients & Elements (Numbered Breakdown)
+Extract and list every single legal requirement/ingredient that must be proven for this section to apply in numbered bullet points. Highlight key terms in **bold**.
+
+### 💡 Real-World Examples & Statutory Illustrations
+Provide 2-3 clear, easy-to-understand hypothetical scenarios/examples demonstrating how this section works in practice.
+
+### ⚖️ Landmark Case Laws & Ratios
+List 2-3 landmark Indian Supreme Court or High Court cases relevant to this section, formatted strictly as:
+- **Case Name & Citation**
+  - **Facts**: (2 lines summary)
+  - **Court Holding / Ratio Decidendi**: (The principle established)
+
+### 🔄 Old vs. New Criminal Code Mapping
+If the input belongs to new criminal codes (BNS, BNSS, BSA), clearly state the corresponding old section from IPC, CrPC, or the Evidence Act, noting key differences or updates. If not applicable, simply write "Not Applicable to this statute."
+
+### 📝 Exam Tip / How to Answer in CU Exams
+A brief, actionable tip on how to incorporate this specific section effectively into a 10-mark or 16-mark Calcutta University exam script.`;
+
+      result = await model.generateContent(prompt);
+
     } else {
       // Default type: 'answer'
       if (!question) return res.status(400).json({ error: 'Question is required' });
