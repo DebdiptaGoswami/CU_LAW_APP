@@ -6,7 +6,7 @@
     <title>CU Law Exam Engine</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./style.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   </head>
@@ -18,61 +18,65 @@
     <div id="history-overlay" class="drawer-overlay hidden"></div>
     <aside id="history-drawer" class="drawer">
       <div class="drawer-header">
-        <h2>Recent History</h2>
-        <button id="closeHistoryBtn" class="icon-btn" title="Close">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        <h2 class="title">Recent History</h2>
+        <button id="closeHistoryBtn" class="button-icon-circular" title="Close">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
         </button>
       </div>
       <div id="history-list" class="drawer-content">
-        <p class="empty-history">No recent history found.</p>
+        <p class="empty-history caption" style="color: var(--colors-ink-muted);">No recent history found.</p>
       </div>
     </aside>
 
     <!-- Developer Modal -->
     <div id="developer-modal-overlay" class="modal-overlay hidden">
-      <div id="developer-modal" class="modal-content glass-panel">
-        <button id="closeDeveloperModalBtn" class="icon-btn modal-close-btn" title="Close">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      <div id="developer-modal" class="modal-content">
+        <button id="closeDeveloperModalBtn" class="button-icon-circular modal-close-btn" title="Close">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
         </button>
-        <h2 class="modal-title">Developer Profile</h2>
+        <h2 class="heading-3" style="margin-bottom: 16px;">Developer Profile</h2>
         <div class="developer-info">
           <h3 class="developer-name">Debdipta Goswami</h3>
           <div class="developer-badge">Shyambazar Law College | B.A. LL.B.</div>
-          <p class="developer-desc">
+          <p class="body-md">
             "Built to empower Calcutta University law students with structured, high-yielding exam prep tools, automated statutory analysis, and AI answer evaluation."
           </p>
         </div>
       </div>
     </div>
 
-    <div class="background-orbs">
-      <div class="orb orb-1"></div>
-      <div class="orb orb-2"></div>
-      <div class="orb orb-3"></div>
-    </div>
-
     <div class="app-container">
-      <header>
-        <div class="header-top">
-          <button id="openHistoryBtn" class="header-action-btn" title="View History">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+      
+      <!-- Top Navigation -->
+      <nav class="nav-bar">
+        <a href="#" class="nav-brand">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="var(--colors-ink)"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="var(--colors-canvas)" stroke-width="2"/></svg>
+          CU Law Engine
+        </a>
+        <div class="nav-links">
+          <button id="aboutDeveloperBtn" class="button-utility" title="About Developer">About</button>
+          <button id="openHistoryBtn" class="button-utility" title="View History">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
             History
           </button>
-          <div class="badge">2025 CBCS Syllabus Compliant</div>
-          <button id="aboutDeveloperBtn" class="header-action-btn icon-btn" title="About Developer">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-          </button>
-          <button id="themeToggleBtn" class="header-action-btn icon-btn" title="Toggle Light/Dark Mode">
-            <svg id="theme-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-          </button>
         </div>
-        <h1>CU Law Exam Engine</h1>
-        <p>Premium Generator, Search, Evaluator & Flashcards</p>
-        <p class="developer-subtitle">Developed by <strong>Debdipta Goswami</strong> (Shyambazar Law College)</p>
+      </nav>
+
+      <!-- Hero Band -->
+      <header class="hero-band">
+        <div class="hero-sticker hero-sticker-1"></div>
+        <div class="hero-sticker hero-sticker-2"></div>
+        <div class="hero-sticker hero-sticker-3"></div>
+        <div class="badge-pill" style="margin-bottom: 16px; border-color: rgba(255,255,255,0.3); color: white; background: rgba(255,255,255,0.1);">2025 CBCS Syllabus Compliant</div>
+        <h1 class="display-1">Premium Law Tools</h1>
+        <p>Generator, Search, Evaluator & Flashcards engineered for Calcutta University students.</p>
+        <div style="display: flex; gap: 12px; justify-content: center; margin-top: 32px;">
+          <a href="#workspace" class="button-primary">Get started</a>
+        </div>
       </header>
 
-      <main>
-        <!-- Dynamic Navigation -->
+      <main class="content-container" id="workspace">
+        <!-- Dynamic Navigation Tabs -->
         <div class="tab-container">
           <button class="tab-btn active" data-tab="tab-generator">Generator</button>
           <button class="tab-btn" data-tab="tab-search">Search</button>
@@ -83,52 +87,47 @@
 
         <!-- 1. Generator Tab -->
         <div id="tab-generator" class="tab-content">
-          <section class="glass-panel input-section">
+          <section class="feature-card has-header" style="--card-accent: var(--colors-accent-purple);">
+            <div class="feature-card-header"></div>
             <div class="grid-2-col">
               <div class="input-group">
                 <label for="subject-select">Subject</label>
-                <div class="select-wrapper">
-                  <select id="subject-select">
-                    <!-- Populated via JS for modularity -->
-                  </select>
-                </div>
+                <select id="subject-select" class="text-input"></select>
               </div>
               <div class="input-group">
                 <label for="marks-select">Marks / Weightage</label>
-                <div class="select-wrapper">
-                  <select id="marks-select">
-                    <option value="16">16 Marks (1,000–1,200 Words)</option>
-                    <option value="10">10 Marks (600–800 Words)</option>
-                    <option value="4/6">4/6 Marks (250–350 Words)</option>
-                  </select>
-                </div>
+                <select id="marks-select" class="text-input">
+                  <option value="16">16 Marks (1,000–1,200 Words)</option>
+                  <option value="10">10 Marks (600–800 Words)</option>
+                  <option value="4/6">4/6 Marks (250–350 Words)</option>
+                </select>
               </div>
             </div>
 
             <div class="input-group">
               <label for="question">Exam Question</label>
-              <textarea id="question" rows="4" placeholder="e.g. Define privity of contract along with its exceptions..."></textarea>
+              <textarea id="question" class="text-input" rows="4" placeholder="e.g. Define privity of contract along with its exceptions..."></textarea>
               <div class="text-counter" id="textCounter">0 words | 0 characters</div>
             </div>
             
-            <button id="generateBtn" class="primary-btn pulse-hover">
+            <button id="generateBtn" class="button-primary" style="width: 100%;">
               <span class="btn-text">Generate Answer</span>
               <div class="spinner hidden" id="loadingSpinner"></div>
             </button>
           </section>
 
-          <section class="glass-panel output-section hidden" id="outputSection">
+          <section class="feature-card hidden" id="outputSection">
             <div class="output-header">
-              <h2>Generated Output</h2>
-              <div class="action-toolbar">
-                <button id="readAloudBtn" class="icon-btn action-btn" title="Read Aloud">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+              <h2 class="heading-3">Generated Output</h2>
+              <div style="display: flex; gap: 8px;">
+                <button id="readAloudBtn" class="button-utility" title="Read Aloud">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
                 </button>
-                <button id="downloadPdfBtn" class="icon-btn action-btn" title="Download PDF">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                <button id="downloadPdfBtn" class="button-utility" title="Download PDF">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                 </button>
-                <button id="copyBtn" class="icon-btn action-btn" title="Copy to Clipboard">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                <button id="copyBtn" class="button-utility" title="Copy to Clipboard">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                 </button>
               </div>
             </div>
@@ -147,20 +146,21 @@
 
         <!-- 2. Search Tab -->
         <div id="tab-search" class="tab-content hidden">
-          <section class="glass-panel input-section">
+          <section class="feature-card has-header" style="--card-accent: var(--colors-accent-orange);">
+            <div class="feature-card-header"></div>
             <div class="input-group">
               <label for="search-topic">Legal Topic / Concept</label>
-              <input type="text" id="search-topic" placeholder="e.g. Free Consent, Minor Agreement" />
+              <input type="text" id="search-topic" class="text-input" placeholder="e.g. Free Consent, Minor Agreement" />
             </div>
             
-            <button id="searchBtn" class="primary-btn pulse-hover">
+            <button id="searchBtn" class="button-primary" style="width: 100%;">
               <span class="btn-text" id="searchBtnText">Search Cases</span>
               <div class="spinner hidden" id="searchLoadingSpinner"></div>
             </button>
           </section>
 
-          <section class="glass-panel output-section hidden" id="searchOutputSection">
-            <div class="output-header"><h2>Search Results</h2></div>
+          <section class="feature-card hidden" id="searchOutputSection">
+            <div class="output-header"><h2 class="heading-3">Search Results</h2></div>
             <div id="searchSkeletonLoader" class="skeleton-wrapper hidden">
               <div class="skeleton skeleton-box"></div>
             </div>
@@ -170,47 +170,44 @@
 
         <!-- 3. Evaluator Mode -->
         <div id="tab-evaluator" class="tab-content hidden">
-          <section class="glass-panel input-section">
+          <section class="feature-card has-header" style="--card-accent: var(--colors-accent-green);">
+            <div class="feature-card-header"></div>
             <div class="grid-2-col">
               <div class="input-group">
                 <label for="evaluator-subject">Subject</label>
-                <div class="select-wrapper">
-                  <select id="evaluator-subject"></select>
-                </div>
+                <select id="evaluator-subject" class="text-input"></select>
               </div>
               <div class="input-group">
                 <label for="evaluator-marks">Target Marks</label>
-                <div class="select-wrapper">
-                  <select id="evaluator-marks">
-                    <option value="16">16 Marks</option>
-                    <option value="10">10 Marks</option>
-                    <option value="6">6 Marks</option>
-                    <option value="4">4 Marks</option>
-                  </select>
-                </div>
+                <select id="evaluator-marks" class="text-input">
+                  <option value="16">16 Marks</option>
+                  <option value="10">10 Marks</option>
+                  <option value="6">6 Marks</option>
+                  <option value="4">4 Marks</option>
+                </select>
               </div>
             </div>
 
             <div class="input-group">
               <label for="evaluator-question">Exam Question Context</label>
-              <input type="text" id="evaluator-question" placeholder="The question the student is answering..." />
+              <input type="text" id="evaluator-question" class="text-input" placeholder="The question the student is answering..." />
             </div>
 
             <div class="input-group">
               <label>Upload Script (Image) OR Paste Typed Answer</label>
               <input type="file" id="evaluator-image" accept="image/png, image/jpeg, image/webp" class="file-input" />
               <div class="or-divider"><span>OR</span></div>
-              <textarea id="evaluator-text" rows="4" placeholder="Paste typed answer script here..."></textarea>
+              <textarea id="evaluator-text" class="text-input" rows="4" placeholder="Paste typed answer script here..."></textarea>
             </div>
             
-            <button id="evaluatorBtn" class="primary-btn pulse-hover">
+            <button id="evaluatorBtn" class="button-primary" style="width: 100%;">
               <span class="btn-text" id="evaluatorBtnText">Evaluate Answer Script</span>
               <div class="spinner hidden" id="evaluatorLoadingSpinner"></div>
             </button>
           </section>
 
-          <section class="glass-panel output-section hidden" id="evaluatorOutputSection">
-            <div class="output-header"><h2>Detailed Scorecard</h2></div>
+          <section class="feature-card hidden" id="evaluatorOutputSection">
+            <div class="output-header"><h2 class="heading-3">Detailed Scorecard</h2></div>
             <div id="evaluatorSkeleton" class="skeleton-wrapper hidden">
               <div class="skeleton skeleton-box"></div>
               <div class="skeleton skeleton-text"></div>
@@ -242,18 +239,18 @@
               </div>
               
               <div class="feedback-grid">
-                <div class="feedback-box success">
-                  <h3>Strengths</h3>
+                <div class="feedback-box" style="border-top: 3px solid var(--colors-accent-green);">
+                  <h3 style="color: var(--colors-accent-green);">Strengths</h3>
                   <ul id="evalStrengths"></ul>
                 </div>
-                <div class="feedback-box warning">
-                  <h3>Weaknesses</h3>
+                <div class="feedback-box" style="border-top: 3px solid var(--colors-accent-orange);">
+                  <h3 style="color: var(--colors-accent-orange);">Weaknesses</h3>
                   <ul id="evalWeaknesses"></ul>
                 </div>
               </div>
               
-              <div class="feedback-box info">
-                <h3>Model Suggestions for Improvement</h3>
+              <div class="feedback-box" style="border-top: 3px solid var(--colors-primary);">
+                <h3 style="color: var(--colors-primary);">Model Suggestions for Improvement</h3>
                 <ul id="evalTips"></ul>
               </div>
             </div>
@@ -262,115 +259,111 @@
 
         <!-- 4. Flashcards Suite -->
         <div id="tab-flashcards" class="tab-content hidden">
-          <section class="glass-panel input-section" id="flashcardSetupSection">
+          <section class="feature-card has-header" id="flashcardSetupSection" style="--card-accent: var(--colors-accent-pink);">
+            <div class="feature-card-header"></div>
             <div class="grid-2-col">
               <div class="input-group">
                 <label for="flashcard-subject">Subject for Revision</label>
-                <div class="select-wrapper">
-                  <select id="flashcard-subject"></select>
-                </div>
+                <select id="flashcard-subject" class="text-input"></select>
               </div>
               <div class="input-group">
                 <label for="flashcard-count">Deck Size</label>
-                <div class="select-wrapper">
-                  <select id="flashcard-count">
-                    <option value="5">5 Cards (Quick Revision)</option>
-                    <option value="10">10 Cards (Standard Deck)</option>
-                    <option value="15">15 Cards (Deep Dive)</option>
-                  </select>
-                </div>
+                <select id="flashcard-count" class="text-input">
+                  <option value="5">5 Cards (Quick Revision)</option>
+                  <option value="10">10 Cards (Standard Deck)</option>
+                  <option value="15">15 Cards (Deep Dive)</option>
+                </select>
               </div>
             </div>
             
-            <button id="generateFlashcardsBtn" class="primary-btn pulse-hover">
+            <button id="generateFlashcardsBtn" class="button-primary" style="width: 100%;">
               <span class="btn-text" id="fcBtnText">Generate Flashcard Deck</span>
               <div class="spinner hidden" id="fcLoadingSpinner"></div>
             </button>
           </section>
 
-          <section class="glass-panel flashcard-section hidden" id="flashcardViewer">
+          <section class="feature-card hidden" id="flashcardViewer">
             <div class="flashcard-header">
-              <div class="progress-tracker">
+              <div class="caption" style="color: var(--colors-ink-muted);">
                 Card <span id="fcCurrent">1</span> of <span id="fcTotal">5</span>
               </div>
-              <button id="newDeckBtn" class="action-btn icon-btn">New Deck</button>
+              <button id="newDeckBtn" class="button-utility">New Deck</button>
             </div>
 
             <div class="flashcard-container" id="flashcardContainer">
               <div class="flashcard-inner">
                 <div class="flashcard-front">
                   <div class="fc-subject-badge" id="fcFrontSubject">Contract Law</div>
-                  <h2 id="fcFrontTopic">Topic Name</h2>
-                  <h3 id="fcFrontTitle" class="fc-highlight">Case Name / Section</h3>
-                  <p class="fc-hint">Click to flip</p>
+                  <h2 class="heading-2" id="fcFrontTopic" style="margin-bottom: 8px;">Topic Name</h2>
+                  <h3 class="title" id="fcFrontTitle" style="color: var(--colors-primary); margin-bottom: 16px;">Case Name / Section</h3>
+                  <p class="caption" style="color: var(--colors-ink-faint);">Click to flip</p>
                 </div>
                 <div class="flashcard-back">
-                  <div class="fc-details">
-                    <h4>Facts</h4>
-                    <p id="fcBackFacts">...</p>
-                    <h4>Legal Issue</h4>
-                    <p id="fcBackIssue">...</p>
-                    <h4>Ratio Decidendi / Principle</h4>
-                    <p id="fcBackRatio">...</p>
-                    <h4>Bare Act Link</h4>
-                    <p id="fcBackSection">...</p>
+                  <div>
+                    <h4 class="eyebrow" style="margin-bottom: 4px; margin-top: 16px;">Facts</h4>
+                    <p class="body-sm" id="fcBackFacts">...</p>
+                    <h4 class="eyebrow" style="margin-bottom: 4px; margin-top: 16px;">Legal Issue</h4>
+                    <p class="body-sm" id="fcBackIssue">...</p>
+                    <h4 class="eyebrow" style="margin-bottom: 4px; margin-top: 16px;">Ratio Decidendi / Principle</h4>
+                    <p class="body-sm" id="fcBackRatio">...</p>
+                    <h4 class="eyebrow" style="margin-bottom: 4px; margin-top: 16px;">Bare Act Link</h4>
+                    <p class="body-sm" id="fcBackSection">...</p>
                   </div>
                 </div>
               </div>
             </div>
 
             <div class="flashcard-controls">
-              <button id="fcPrevBtn" class="fc-btn secondary-btn" disabled>Previous</button>
-              <button id="fcFlipBtn" class="fc-btn primary-btn">Flip Card</button>
-              <button id="fcNextBtn" class="fc-btn secondary-btn">Next</button>
+              <button id="fcPrevBtn" class="button-utility" disabled>Previous</button>
+              <button id="fcFlipBtn" class="button-secondary">Flip Card</button>
+              <button id="fcNextBtn" class="button-utility">Next</button>
             </div>
           </section>
         </div>
 
         <!-- 5. Decoder Tab -->
         <div id="tab-decoder" class="tab-content hidden">
-          <section class="glass-panel input-section">
+          <section class="feature-card has-header" style="--card-accent: var(--colors-accent-sky);">
+            <div class="feature-card-header"></div>
             <div class="grid-2-col">
               <div class="input-group">
                 <label for="decode-statute">Statute / Subject Context</label>
-                <div class="select-wrapper">
-                  <select id="decode-statute">
-                    <option value="Bharatiya Nyaya Sanhita (BNS)">Bharatiya Nyaya Sanhita (BNS)</option>
-                    <option value="Bharatiya Nagarik Suraksha Sanhita (BNSS)">Bharatiya Nagarik Suraksha Sanhita (BNSS)</option>
-                    <option value="Bharatiya Sakshya Adhiniyam (BSA)">Bharatiya Sakshya Adhiniyam (BSA)</option>
-                    <option value="Indian Contract Act, 1872">Indian Contract Act, 1872</option>
-                    <option value="Constitution of India">Constitution of India</option>
-                    <option value="Family Law (Hindu/Muslim Law)">Family Law (Hindu/Muslim Law)</option>
-                    <option value="Other / General">Other / General</option>
-                  </select>
-                </div>
+                <select id="decode-statute" class="text-input">
+                  <option value="Bharatiya Nyaya Sanhita (BNS)">Bharatiya Nyaya Sanhita (BNS)</option>
+                  <option value="Bharatiya Nagarik Suraksha Sanhita (BNSS)">Bharatiya Nagarik Suraksha Sanhita (BNSS)</option>
+                  <option value="Bharatiya Sakshya Adhiniyam (BSA)">Bharatiya Sakshya Adhiniyam (BSA)</option>
+                  <option value="Indian Contract Act, 1872">Indian Contract Act, 1872</option>
+                  <option value="Constitution of India">Constitution of India</option>
+                  <option value="Family Law (Hindu/Muslim Law)">Family Law (Hindu/Muslim Law)</option>
+                  <option value="Other / General">Other / General</option>
+                </select>
               </div>
               <div class="input-group">
                 <label for="decode-section">Section Number</label>
-                <input type="text" id="decode-section" placeholder="e.g. Section 103, Section 2(h)" />
+                <input type="text" id="decode-section" class="text-input" placeholder="e.g. Section 103, Section 2(h)" />
               </div>
             </div>
 
             <div class="input-group">
               <label for="decode-raw">Raw Statutory Text (Optional)</label>
-              <textarea id="decode-raw" rows="3" placeholder="Paste the exact text of the section if it is highly obscure..."></textarea>
+              <textarea id="decode-raw" class="text-input" rows="3" placeholder="Paste the exact text of the section if it is highly obscure..."></textarea>
             </div>
             
-            <button id="decodeBtn" class="primary-btn pulse-hover">
+            <button id="decodeBtn" class="button-primary" style="width: 100%;">
               <span class="btn-text" id="decodeBtnText">Decode Section</span>
               <div class="spinner hidden" id="decodeLoadingSpinner"></div>
             </button>
           </section>
 
-          <section class="glass-panel output-section hidden" id="decodeOutputSection">
+          <section class="feature-card hidden" id="decodeOutputSection">
             <div class="output-header">
-              <h2>Bare Act Breakdown</h2>
-              <div class="action-toolbar">
-                <button id="decodeReadAloudBtn" class="icon-btn action-btn" title="Listen (Text-to-Speech)">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+              <h2 class="heading-3">Bare Act Breakdown</h2>
+              <div style="display: flex; gap: 8px;">
+                <button id="decodeReadAloudBtn" class="button-utility" title="Listen (Text-to-Speech)">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
                 </button>
-                <button id="decodeCopyBtn" class="icon-btn action-btn" title="Copy Breakdown">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                <button id="decodeCopyBtn" class="button-utility" title="Copy Breakdown">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                 </button>
               </div>
             </div>
@@ -387,7 +380,7 @@
       </main>
       
       <footer>
-        <p class="footer-text">&copy; 2026 CU Law Exam Engine &bull; Designed & Developed by <span class="footer-highlight">Debdipta Goswami</span></p>
+        <p>&copy; 2026 CU Law Exam Engine &bull; Designed by Debdipta Goswami</p>
       </footer>
     </div>
 

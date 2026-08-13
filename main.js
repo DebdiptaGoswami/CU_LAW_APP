@@ -41,7 +41,6 @@ populateSubjects();
 // Global DOM & Utilities
 // -----------------------------------------------------------------------------
 const body = document.body;
-const themeToggleBtn = document.getElementById('themeToggleBtn');
 const toast = document.getElementById('toast');
 
 const showToast = (message, duration = 3000) => {
@@ -54,14 +53,7 @@ const showToast = (message, duration = 3000) => {
   }, duration);
 };
 
-const initTheme = () => {
-  if (localStorage.getItem('cu_law_theme') === 'light') body.classList.add('light-theme');
-};
-initTheme();
-themeToggleBtn.addEventListener('click', () => {
-  body.classList.toggle('light-theme');
-  localStorage.setItem('cu_law_theme', body.classList.contains('light-theme') ? 'light' : 'dark');
-});
+
 
 // Tab Switching Logic
 const tabBtns = document.querySelectorAll('.tab-btn');
