@@ -1,80 +1,91 @@
 import { marked } from 'marked';
 
-// DOM Elements
+// -----------------------------------------------------------------------------
+// Subjects Data (Used across Generator, Evaluator, Flashcards)
+// -----------------------------------------------------------------------------
+const subjectsData = [
+  { group: "Semester 1", subjects: ["General Principles of Law of Contract", "Family Law - I"] },
+  { group: "Semester 2", subjects: ["Special Contract", "Family Law - II"] },
+  { group: "Semester 3", subjects: ["Competition Law", "Law of Torts including MV Accident"] },
+  { group: "Semester 4", subjects: ["Constitutional Law - I", "Law of Crimes - I (BNS)", "Land Laws"] },
+  { group: "Semester 5", subjects: ["Constitutional Law - II", "Administrative Law", "Property Law"] },
+  { group: "Semester 6", subjects: ["Law of Crimes - II (BNSS)", "Civil Procedure Code", "Law of Copyright", "Jurisprudence"] },
+  { group: "Semester 7", subjects: ["Public International Law", "Banking Law", "Law of Evidence (BSA)"] },
+  { group: "Semester 8", subjects: ["Human Rights Law", "Interpretation of Statutes", "Labour Law - I"] },
+  { group: "Semester 9", subjects: ["Company Law", "Information Technology Law", "Labour Law - II"] },
+  { group: "Semester 10", subjects: ["Taxation Law (Income Tax & GST)", "Environmental Law"] }
+];
+
+const populateSubjects = () => {
+  const selects = ['subject-select', 'evaluator-subject', 'flashcard-subject'];
+  selects.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.innerHTML = '';
+    subjectsData.forEach(semester => {
+      const optgroup = document.createElement('optgroup');
+      optgroup.label = semester.group;
+      semester.subjects.forEach(sub => {
+        const option = document.createElement('option');
+        option.value = sub;
+        option.textContent = sub;
+        optgroup.appendChild(option);
+      });
+      el.appendChild(optgroup);
+    });
+  });
+};
+populateSubjects();
+
+// -----------------------------------------------------------------------------
+// Global DOM & Utilities
+// -----------------------------------------------------------------------------
 const body = document.body;
 const themeToggleBtn = document.getElementById('themeToggleBtn');
 const toast = document.getElementById('toast');
 
-// History Drawer Elements
-const openHistoryBtn = document.getElementById('openHistoryBtn');
-const closeHistoryBtn = document.getElementById('closeHistoryBtn');
-const historyOverlay = document.getElementById('history-overlay');
-const historyDrawer = document.getElementById('history-drawer');
-const historyList = document.getElementById('history-list');
-
-// Generator Elements
-const subjectSelect = document.getElementById('subject-select');
-const marksSelect = document.getElementById('marks-select');
-const questionInput = document.getElementById('question');
-const textCounter = document.getElementById('textCounter');
-const generateBtn = document.getElementById('generateBtn');
-const btnText = document.querySelector('.btn-text');
-const skeletonLoader = document.getElementById('skeletonLoader');
-const outputSection = document.getElementById('outputSection');
-const outputContent = document.getElementById('outputContent');
-const copyBtn = document.getElementById('copyBtn');
-const downloadPdfBtn = document.getElementById('downloadPdfBtn');
-const readAloudBtn = document.getElementById('readAloudBtn');
-
-// Search Elements
-const searchTopicInput = document.getElementById('search-topic');
-const searchBtn = document.getElementById('searchBtn');
-const searchBtnText = document.getElementById('searchBtnText');
-const searchSkeletonLoader = document.getElementById('searchSkeletonLoader');
-const searchOutputSection = document.getElementById('searchOutputSection');
-const searchOutputContent = document.getElementById('searchOutputContent');
-
-// -----------------------------------------------------------------------------
-// Toast Notification
-// -----------------------------------------------------------------------------
 const showToast = (message, duration = 3000) => {
   toast.textContent = message;
   toast.classList.remove('hidden');
-  // Small delay to allow CSS transition to kick in
   setTimeout(() => toast.classList.add('show'), 10);
-  
   setTimeout(() => {
     toast.classList.remove('show');
-    setTimeout(() => toast.classList.add('hidden'), 400); // wait for transition
+    setTimeout(() => toast.classList.add('hidden'), 400);
   }, duration);
 };
 
-// -----------------------------------------------------------------------------
-// Theme Management
-// -----------------------------------------------------------------------------
 const initTheme = () => {
-  const savedTheme = localStorage.getItem('cu_law_theme');
-  if (savedTheme === 'light') {
-    body.classList.add('light-theme');
-  }
+  if (localStorage.getItem('cu_law_theme') === 'light') body.classList.add('light-theme');
 };
 initTheme();
-
 themeToggleBtn.addEventListener('click', () => {
   body.classList.toggle('light-theme');
-  const isLight = body.classList.contains('light-theme');
-  localStorage.setItem('cu_law_theme', isLight ? 'light' : 'dark');
+  localStorage.setItem('cu_law_theme', body.classList.contains('light-theme') ? 'light' : 'dark');
+});
+
+// Tab Switching Logic
+const tabBtns = document.querySelectorAll('.tab-btn');
+const tabContents = document.querySelectorAll('.tab-content');
+tabBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    tabBtns.forEach(b => b.classList.remove('active'));
+    tabContents.forEach(c => c.classList.add('hidden'));
+    btn.classList.add('active');
+    document.getElementById(btn.getAttribute('data-tab')).classList.remove('hidden');
+  });
 });
 
 // -----------------------------------------------------------------------------
-// History Management
+// History Drawer
 // -----------------------------------------------------------------------------
 let historyData = JSON.parse(localStorage.getItem('cu_law_history') || '[]');
+const historyList = document.getElementById('history-list');
+const historyOverlay = document.getElementById('history-overlay');
+const historyDrawer = document.getElementById('history-drawer');
 
 const saveToHistory = (entry) => {
-  // entry = { type: 'answer'|'search', query: string, subject?: string, marks?: string, answer: string, timestamp: number }
   historyData.unshift(entry);
-  if (historyData.length > 5) historyData.pop(); // Keep only last 5
+  if (historyData.length > 5) historyData.pop();
   localStorage.setItem('cu_law_history', JSON.stringify(historyData));
   renderHistory();
 };
@@ -85,14 +96,10 @@ const renderHistory = () => {
     historyList.innerHTML = '<p class="empty-history">No recent history found.</p>';
     return;
   }
-
   historyData.forEach((item, index) => {
     const card = document.createElement('div');
     card.className = 'history-card';
-    card.innerHTML = `
-      <h4>${item.type === 'search' ? '🔍 Case Search' : '📝 Answer Gen'}</h4>
-      <p><strong>Q:</strong> ${item.query}</p>
-    `;
+    card.innerHTML = `<h4>${item.type === 'search' ? '🔍 Search' : (item.type === 'evaluate' ? '⚖️ Eval' : '📝 Answer')}</h4><p><strong>Q:</strong> ${item.query}</p>`;
     card.addEventListener('click', () => loadHistoryItem(index));
     historyList.appendChild(card);
   });
@@ -101,264 +108,289 @@ const renderHistory = () => {
 const loadHistoryItem = (index) => {
   const item = historyData[index];
   closeDrawer();
-
   if (item.type === 'answer') {
     document.querySelector('[data-tab="tab-generator"]').click();
-    questionInput.value = item.query;
-    subjectSelect.value = item.subject;
-    marksSelect.value = item.marks;
-    outputContent.innerHTML = marked.parse(item.answer);
-    outputSection.classList.remove('hidden');
-    updateCounter();
-  } else {
+    document.getElementById('question').value = item.query;
+    document.getElementById('outputContent').innerHTML = marked.parse(item.answer);
+    document.getElementById('outputSection').classList.remove('hidden');
+  } else if (item.type === 'search') {
     document.querySelector('[data-tab="tab-search"]').click();
-    searchTopicInput.value = item.query;
-    searchOutputContent.innerHTML = marked.parse(item.answer);
-    searchOutputSection.classList.remove('hidden');
+    document.getElementById('search-topic').value = item.query;
+    document.getElementById('searchOutputContent').innerHTML = marked.parse(item.answer);
+    document.getElementById('searchOutputSection').classList.remove('hidden');
+  } else if (item.type === 'evaluate') {
+    document.querySelector('[data-tab="tab-evaluator"]').click();
+    renderScorecard(JSON.parse(item.answer));
   }
 };
 
-const openDrawer = () => {
-  renderHistory();
-  historyOverlay.classList.remove('hidden');
-  setTimeout(() => historyOverlay.classList.add('show'), 10);
-  historyDrawer.classList.add('open');
-};
-
-const closeDrawer = () => {
-  historyDrawer.classList.remove('open');
-  historyOverlay.classList.remove('show');
-  setTimeout(() => historyOverlay.classList.add('hidden'), 300);
-};
-
-openHistoryBtn.addEventListener('click', openDrawer);
-closeHistoryBtn.addEventListener('click', closeDrawer);
+const openDrawer = () => { renderHistory(); historyOverlay.classList.remove('hidden'); setTimeout(() => historyOverlay.classList.add('show'), 10); historyDrawer.classList.add('open'); };
+const closeDrawer = () => { historyDrawer.classList.remove('open'); historyOverlay.classList.remove('show'); setTimeout(() => historyOverlay.classList.add('hidden'), 300); };
+document.getElementById('openHistoryBtn').addEventListener('click', openDrawer);
+document.getElementById('closeHistoryBtn').addEventListener('click', closeDrawer);
 historyOverlay.addEventListener('click', closeDrawer);
 
 // -----------------------------------------------------------------------------
-// Tab Switching
+// Evaluator Logic
 // -----------------------------------------------------------------------------
-const tabBtns = document.querySelectorAll('.tab-btn');
-const tabContents = document.querySelectorAll('.tab-content');
+const evaluatorBtn = document.getElementById('evaluatorBtn');
+const evalFileInput = document.getElementById('evaluator-image');
+const evalTextInput = document.getElementById('evaluator-text');
 
-tabBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    tabBtns.forEach(b => b.classList.remove('active'));
-    tabContents.forEach(c => c.classList.add('hidden'));
+let base64Image = null;
 
-    btn.classList.add('active');
-    const tabId = btn.getAttribute('data-tab');
-    document.getElementById(tabId).classList.remove('hidden');
-  });
+evalFileInput.addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onloadend = () => { base64Image = reader.result.split(',')[1]; };
+  reader.readAsDataURL(file);
 });
 
-// -----------------------------------------------------------------------------
-// Textarea Counter
-// -----------------------------------------------------------------------------
-const updateCounter = () => {
-  const text = questionInput.value.trim();
-  const chars = text.length;
-  const words = text === '' ? 0 : text.split(/\s+/).length;
-  textCounter.textContent = `${words} words | ${chars} characters`;
+evaluatorBtn.addEventListener('click', async () => {
+  const subject = document.getElementById('evaluator-subject').value;
+  const marks = document.getElementById('evaluator-marks').value;
+  const question = document.getElementById('evaluator-question').value.trim();
+  const textAnswer = evalTextInput.value.trim();
+
+  if (!question) return showToast("Please enter the exam question context.");
+  if (!base64Image && !textAnswer) return showToast("Please upload an image or paste text.");
+
+  evaluatorBtn.disabled = true;
+  document.getElementById('evaluatorBtnText').textContent = 'Evaluating Script...';
+  document.getElementById('evaluatorLoadingSpinner').classList.remove('hidden');
+  document.getElementById('evaluatorOutputSection').classList.remove('hidden');
+  document.getElementById('evaluatorDashboard').classList.add('hidden');
+  document.getElementById('evaluatorSkeleton').classList.remove('hidden');
+
+  try {
+    const payload = { type: 'evaluate', subject, marks, question };
+    if (base64Image) payload.image = base64Image;
+    if (textAnswer) payload.textAnswer = textAnswer;
+
+    const res = await fetch('/api/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    
+    const scorecard = JSON.parse(data.answer); // expects JSON string from API
+    renderScorecard(scorecard);
+    
+    saveToHistory({ type: 'evaluate', query: question, answer: data.answer, timestamp: Date.now() });
+  } catch (error) {
+    console.error(error);
+    showToast(`Evaluation Failed: ${error.message}`);
+  } finally {
+    evaluatorBtn.disabled = false;
+    document.getElementById('evaluatorBtnText').textContent = 'Evaluate Answer Script';
+    document.getElementById('evaluatorLoadingSpinner').classList.add('hidden');
+    document.getElementById('evaluatorSkeleton').classList.add('hidden');
+  }
+});
+
+const renderScorecard = (data) => {
+  // data = { score: 12, maxMarks: 16, grade: "A+", statProg: 80, caseProg: 75, structProg: 90, termProg: 85, strengths: [], weaknesses: [], tips: [] }
+  document.getElementById('evalScore').textContent = `${data.score} / ${data.maxMarks}`;
+  document.getElementById('evalGrade').textContent = data.grade;
+  
+  setTimeout(() => {
+    document.getElementById('prog-stat').style.width = `${data.statProg}%`;
+    document.getElementById('prog-case').style.width = `${data.caseProg}%`;
+    document.getElementById('prog-struct').style.width = `${data.structProg}%`;
+    document.getElementById('prog-term').style.width = `${data.termProg}%`;
+  }, 100);
+
+  const fillList = (id, items) => {
+    document.getElementById(id).innerHTML = items.map(i => `<li>${i}</li>`).join('');
+  };
+  fillList('evalStrengths', data.strengths);
+  fillList('evalWeaknesses', data.weaknesses);
+  fillList('evalTips', data.tips);
+  
+  document.getElementById('evaluatorDashboard').classList.remove('hidden');
 };
-questionInput.addEventListener('input', updateCounter);
 
 // -----------------------------------------------------------------------------
-// Generator Logic
+// Flashcards Logic
+// -----------------------------------------------------------------------------
+let flashcardsDeck = JSON.parse(localStorage.getItem('cu_law_flashcards') || '[]');
+let fcIndex = 0;
+
+const fcContainer = document.getElementById('flashcardContainer');
+const fcFlipBtn = document.getElementById('fcFlipBtn');
+const fcPrevBtn = document.getElementById('fcPrevBtn');
+const fcNextBtn = document.getElementById('fcNextBtn');
+
+const renderFlashcard = () => {
+  if (flashcardsDeck.length === 0) return;
+  const card = flashcardsDeck[fcIndex];
+  fcContainer.classList.remove('flipped'); // Reset flip state
+  
+  document.getElementById('fcCurrent').textContent = fcIndex + 1;
+  document.getElementById('fcTotal').textContent = flashcardsDeck.length;
+  
+  setTimeout(() => {
+    document.getElementById('fcFrontSubject').textContent = card.subject || 'Law';
+    document.getElementById('fcFrontTopic').textContent = card.topic;
+    document.getElementById('fcFrontTitle').textContent = card.caseName;
+    document.getElementById('fcBackFacts').textContent = card.facts;
+    document.getElementById('fcBackIssue').textContent = card.issue;
+    document.getElementById('fcBackRatio').textContent = card.ratio;
+    document.getElementById('fcBackSection').textContent = card.section;
+  }, 150); // wait half of flip animation to change text if it was flipped
+
+  fcPrevBtn.disabled = fcIndex === 0;
+  fcNextBtn.disabled = fcIndex === flashcardsDeck.length - 1;
+};
+
+document.getElementById('generateFlashcardsBtn').addEventListener('click', async () => {
+  const subject = document.getElementById('flashcard-subject').value;
+  const count = document.getElementById('flashcard-count').value;
+  
+  const btn = document.getElementById('generateFlashcardsBtn');
+  btn.disabled = true;
+  document.getElementById('fcBtnText').textContent = 'Generating Deck...';
+  document.getElementById('fcLoadingSpinner').classList.remove('hidden');
+
+  try {
+    const res = await fetch('/api/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'flashcards', subject, count })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    
+    flashcardsDeck = JSON.parse(data.answer); // Expect array of JSON objects
+    localStorage.setItem('cu_law_flashcards', JSON.stringify(flashcardsDeck));
+    fcIndex = 0;
+    
+    document.getElementById('flashcardViewer').classList.remove('hidden');
+    document.getElementById('flashcardSetupSection').classList.add('hidden');
+    renderFlashcard();
+  } catch (err) {
+    showToast(`Flashcard Error: ${err.message}`);
+  } finally {
+    btn.disabled = false;
+    document.getElementById('fcBtnText').textContent = 'Generate Flashcard Deck';
+    document.getElementById('fcLoadingSpinner').classList.add('hidden');
+  }
+});
+
+// Flip and Nav Controls
+fcContainer.addEventListener('click', () => fcContainer.classList.toggle('flipped'));
+fcFlipBtn.addEventListener('click', () => fcContainer.classList.toggle('flipped'));
+
+fcPrevBtn.addEventListener('click', () => { if (fcIndex > 0) { fcIndex--; renderFlashcard(); }});
+fcNextBtn.addEventListener('click', () => { if (fcIndex < flashcardsDeck.length - 1) { fcIndex++; renderFlashcard(); }});
+
+document.getElementById('newDeckBtn').addEventListener('click', () => {
+  document.getElementById('flashcardViewer').classList.add('hidden');
+  document.getElementById('flashcardSetupSection').classList.remove('hidden');
+});
+
+// Auto-load if deck exists
+if (flashcardsDeck.length > 0) {
+  document.getElementById('flashcardViewer').classList.remove('hidden');
+  document.getElementById('flashcardSetupSection').classList.add('hidden');
+  renderFlashcard();
+}
+
+// -----------------------------------------------------------------------------
+// Answer Generator Logic (Original with minor updates)
 // -----------------------------------------------------------------------------
 let currentRawMarkdown = '';
+const questionInput = document.getElementById('question');
+const generateBtn = document.getElementById('generateBtn');
 
-const generateAnswer = async () => {
+document.getElementById('textCounter') && questionInput.addEventListener('input', () => {
+  const t = questionInput.value.trim();
+  document.getElementById('textCounter').textContent = `${t === '' ? 0 : t.split(/\s+/).length} words | ${t.length} characters`;
+});
+
+generateBtn.addEventListener('click', async () => {
   const question = questionInput.value.trim();
-  const subject = subjectSelect.value;
-  const marks = marksSelect.value;
-
-  if (!question) {
-    showToast('Please enter an exam question.');
-    return;
-  }
-
-  // UI state updates
-  generateBtn.disabled = true;
-  generateBtn.classList.remove('pulse-hover');
-  btnText.textContent = 'Generating...';
+  if (!question) return showToast('Please enter an exam question.');
   
-  outputSection.classList.remove('hidden');
-  outputContent.classList.add('hidden');
-  skeletonLoader.classList.remove('hidden'); // Show shimmer
+  generateBtn.disabled = true;
+  document.querySelector('#generateBtn .btn-text').textContent = 'Generating...';
+  document.getElementById('outputSection').classList.remove('hidden');
+  document.getElementById('outputContent').classList.add('hidden');
+  document.getElementById('skeletonLoader').classList.remove('hidden');
 
   try {
     const res = await fetch('/api/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: 'answer', question, subject, marks }),
+      body: JSON.stringify({ type: 'answer', question, subject: document.getElementById('subject-select').value, marks: document.getElementById('marks-select').value }),
     });
-
     const data = await res.json();
-
-    if (!res.ok) {
-      throw new Error(data.error || 'Server responded with an error');
-    }
+    if (!res.ok) throw new Error(data.error);
 
     currentRawMarkdown = data.answer;
-    outputContent.innerHTML = marked.parse(data.answer);
-    
-    // Save to history
-    saveToHistory({
-      type: 'answer',
-      query: question,
-      subject,
-      marks,
-      answer: data.answer,
-      timestamp: Date.now()
-    });
-    
+    document.getElementById('outputContent').innerHTML = marked.parse(data.answer);
+    saveToHistory({ type: 'answer', query: question, answer: data.answer, timestamp: Date.now() });
   } catch (error) {
-    console.error('Error:', error);
-    showToast(`Error: ${error.message || 'Failed to connect.'}`);
-    outputSection.classList.add('hidden');
+    showToast(`Error: ${error.message}`);
+    document.getElementById('outputSection').classList.add('hidden');
   } finally {
     generateBtn.disabled = false;
-    generateBtn.classList.add('pulse-hover');
-    btnText.textContent = 'Generate Answer';
-    skeletonLoader.classList.add('hidden');
-    outputContent.classList.remove('hidden');
+    document.querySelector('#generateBtn .btn-text').textContent = 'Generate Answer';
+    document.getElementById('skeletonLoader').classList.add('hidden');
+    document.getElementById('outputContent').classList.remove('hidden');
   }
-};
-
-generateBtn.addEventListener('click', generateAnswer);
+});
 
 // -----------------------------------------------------------------------------
-// Action Toolbar Logic
+// Search Logic (Original with minor updates)
 // -----------------------------------------------------------------------------
-copyBtn.addEventListener('click', async () => {
-  if (!currentRawMarkdown) return;
+document.getElementById('searchBtn').addEventListener('click', async () => {
+  const topic = document.getElementById('search-topic').value.trim();
+  if (!topic) return showToast('Please enter a legal topic.');
+  
+  document.getElementById('searchBtn').disabled = true;
+  document.getElementById('searchBtnText').textContent = 'Searching...';
+  document.getElementById('searchOutputSection').classList.remove('hidden');
+  document.getElementById('searchOutputContent').classList.add('hidden');
+  document.getElementById('searchSkeletonLoader').classList.remove('hidden');
+
   try {
-    await navigator.clipboard.writeText(currentRawMarkdown);
-    showToast('Markdown copied to clipboard!');
-  } catch (err) {
-    console.error('Failed to copy: ', err);
+    const res = await fetch('/api/generate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'search', topic }) });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+
+    document.getElementById('searchOutputContent').innerHTML = marked.parse(data.answer);
+    saveToHistory({ type: 'search', query: topic, answer: data.answer, timestamp: Date.now() });
+  } catch (error) {
+    showToast(`Error: ${error.message}`);
+    document.getElementById('searchOutputSection').classList.add('hidden');
+  } finally {
+    document.getElementById('searchBtn').disabled = false;
+    document.getElementById('searchBtnText').textContent = 'Search Cases';
+    document.getElementById('searchSkeletonLoader').classList.add('hidden');
+    document.getElementById('searchOutputContent').classList.remove('hidden');
   }
 });
 
-downloadPdfBtn.addEventListener('click', () => {
-  const element = document.getElementById('outputContent');
-  if (!element.innerHTML.trim()) return;
-  
-  const wrapper = document.createElement('div');
-  wrapper.innerHTML = element.innerHTML;
-  wrapper.className = 'markdown-body';
-  wrapper.style.color = '#000';
-  wrapper.style.backgroundColor = '#fff';
-  wrapper.style.padding = '20px';
-  wrapper.style.fontSize = '12pt';
-  
-  const headings = wrapper.querySelectorAll('h1, h2, h3, strong');
-  headings.forEach(h => h.style.color = '#000');
-  
-  const blockquotes = wrapper.querySelectorAll('blockquote');
-  blockquotes.forEach(bq => {
-    bq.style.color = '#333';
-    bq.style.backgroundColor = '#f9f9f9';
-    bq.style.borderLeftColor = '#8a2be2';
-  });
-
-  const opt = {
-    margin:       0.75,
-    filename:     'CU_Law_Answer_Script.pdf',
-    image:        { type: 'jpeg', quality: 0.98 },
-    html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
-    jsPDF:        { unit: 'in', format: 'A4', orientation: 'portrait' }
-  };
-  
-  html2pdf().set(opt).from(wrapper).save();
-  showToast('PDF Downloading...');
+// Extra Action Toolbar Handlers
+document.getElementById('copyBtn').addEventListener('click', async () => {
+  if (!currentRawMarkdown) return;
+  try { await navigator.clipboard.writeText(currentRawMarkdown); showToast('Markdown copied to clipboard!'); } catch (err) {}
 });
 
-// Text-to-Speech (Read Aloud)
 let isSpeaking = false;
-readAloudBtn.addEventListener('click', () => {
-  if (!('speechSynthesis' in window)) {
-    showToast('Text-to-speech not supported in this browser.');
-    return;
-  }
-
-  if (isSpeaking) {
-    window.speechSynthesis.cancel();
-    isSpeaking = false;
-    showToast('Audio stopped.');
-    return;
-  }
-
-  const textToRead = outputContent.innerText; // Get plain text without HTML tags
-  if (!textToRead.trim()) return;
-
-  const utterance = new SpeechSynthesisUtterance(textToRead);
-  utterance.rate = 1.0;
-  
-  utterance.onend = () => { isSpeaking = false; };
-  utterance.onerror = () => { isSpeaking = false; showToast('Speech synthesis interrupted.'); };
-  
-  window.speechSynthesis.speak(utterance);
+document.getElementById('readAloudBtn').addEventListener('click', () => {
+  if (!('speechSynthesis' in window)) return showToast('Text-to-speech not supported.');
+  if (isSpeaking) { window.speechSynthesis.cancel(); isSpeaking = false; return showToast('Audio stopped.'); }
+  const text = document.getElementById('outputContent').innerText;
+  if (!text.trim()) return;
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.onend = () => { isSpeaking = false; };
+  window.speechSynthesis.speak(utt);
   isSpeaking = true;
   showToast('Reading answer aloud... (Click again to stop)');
-});
-
-// -----------------------------------------------------------------------------
-// Search Logic
-// -----------------------------------------------------------------------------
-const searchCases = async () => {
-  const topic = searchTopicInput.value.trim();
-
-  if (!topic) {
-    showToast('Please enter a legal topic.');
-    return;
-  }
-
-  searchBtn.disabled = true;
-  searchBtn.classList.remove('pulse-hover');
-  searchBtnText.textContent = 'Searching...';
-  
-  searchOutputSection.classList.remove('hidden');
-  searchOutputContent.classList.add('hidden');
-  searchSkeletonLoader.classList.remove('hidden');
-
-  try {
-    const res = await fetch('/api/generate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: 'search', topic }),
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      throw new Error(data.error || 'Server responded with an error');
-    }
-
-    searchOutputContent.innerHTML = marked.parse(data.answer);
-    
-    saveToHistory({
-      type: 'search',
-      query: topic,
-      answer: data.answer,
-      timestamp: Date.now()
-    });
-    
-  } catch (error) {
-    console.error('Error searching cases:', error);
-    showToast(`Error: ${error.message || 'Failed to search.'}`);
-    searchOutputSection.classList.add('hidden');
-  } finally {
-    searchBtn.disabled = false;
-    searchBtn.classList.add('pulse-hover');
-    searchBtnText.textContent = 'Search Cases';
-    searchSkeletonLoader.classList.add('hidden');
-    searchOutputContent.classList.remove('hidden');
-  }
-};
-
-searchBtn.addEventListener('click', searchCases);
-searchTopicInput.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') searchCases();
 });

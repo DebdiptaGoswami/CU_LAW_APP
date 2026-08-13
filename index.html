@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CU Law Exam Engine</title>
-    <!-- Fonts: Google Fonts (Inter & Outfit) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
@@ -25,7 +24,6 @@
         </button>
       </div>
       <div id="history-list" class="drawer-content">
-        <!-- History items go here -->
         <p class="empty-history">No recent history found.</p>
       </div>
     </aside>
@@ -49,74 +47,30 @@
           </button>
         </div>
         <h1>CU Law Exam Engine</h1>
-        <p>Premium Answer Formatting & Case Law Search</p>
+        <p>Premium Generator, Search, Evaluator & Flashcards</p>
       </header>
 
       <main>
+        <!-- Dynamic Navigation -->
         <div class="tab-container">
-          <button class="tab-btn active" data-tab="tab-generator">Answer Generator</button>
-          <button class="tab-btn" data-tab="tab-search">Case Law Search</button>
+          <button class="tab-btn active" data-tab="tab-generator">Generator</button>
+          <button class="tab-btn" data-tab="tab-search">Search</button>
+          <button class="tab-btn" data-tab="tab-evaluator">Evaluator</button>
+          <button class="tab-btn" data-tab="tab-flashcards">Flashcards</button>
         </div>
 
+        <!-- 1. Generator Tab -->
         <div id="tab-generator" class="tab-content">
           <section class="glass-panel input-section">
-            
             <div class="grid-2-col">
               <div class="input-group">
                 <label for="subject-select">Subject</label>
                 <div class="select-wrapper">
                   <select id="subject-select">
-                    <optgroup label="Semester 1">
-                      <option value="General Principles of Law of Contract">General Principles of Law of Contract</option>
-                      <option value="Family Law - I">Family Law - I</option>
-                    </optgroup>
-                    <optgroup label="Semester 2">
-                      <option value="Special Contract">Special Contract</option>
-                      <option value="Family Law - II">Family Law - II</option>
-                    </optgroup>
-                    <optgroup label="Semester 3">
-                      <option value="Competition Law">Competition Law</option>
-                      <option value="Law of Torts including MV Accident and Consumer Protection Laws">Law of Torts including MV Accident and Consumer Protection Laws</option>
-                    </optgroup>
-                    <optgroup label="Semester 4">
-                      <option value="Constitutional Law - I">Constitutional Law - I</option>
-                      <option value="Law of Crimes - I (Bharatiya Nyaya Sanhita)">Law of Crimes - I (Bharatiya Nyaya Sanhita)</option>
-                      <option value="Land Laws including Ceiling and Other Local Laws">Land Laws including Ceiling and Other Local Laws</option>
-                    </optgroup>
-                    <optgroup label="Semester 5">
-                      <option value="Constitutional Law - II">Constitutional Law - II</option>
-                      <option value="Administrative Law">Administrative Law</option>
-                      <option value="Property Law">Property Law</option>
-                    </optgroup>
-                    <optgroup label="Semester 6">
-                      <option value="Law of Crimes - II (Bharatiya Nagarik Suraksha Sanhita)">Law of Crimes - II (Bharatiya Nagarik Suraksha Sanhita)</option>
-                      <option value="Civil Procedure Code and Limitation">Civil Procedure Code and Limitation</option>
-                      <option value="Law of Copyright">Law of Copyright</option>
-                      <option value="Jurisprudence and Legal Theory">Jurisprudence and Legal Theory</option>
-                    </optgroup>
-                    <optgroup label="Semester 7">
-                      <option value="Public International Law">Public International Law</option>
-                      <option value="Banking Law">Banking Law</option>
-                      <option value="Law of Evidence (Bharatiya Sakshya Adhiniyam)">Law of Evidence (Bharatiya Sakshya Adhiniyam)</option>
-                    </optgroup>
-                    <optgroup label="Semester 8">
-                      <option value="Human Rights Law and Practice">Human Rights Law and Practice</option>
-                      <option value="Interpretation of Statutes and Principles of Legislation">Interpretation of Statutes and Principles of Legislation</option>
-                      <option value="Labour and Industrial Law - I">Labour and Industrial Law - I</option>
-                    </optgroup>
-                    <optgroup label="Semester 9">
-                      <option value="Company Law">Company Law</option>
-                      <option value="Information Technology Law">Information Technology Law</option>
-                      <option value="Labour and Industrial Laws - II">Labour and Industrial Laws - II</option>
-                    </optgroup>
-                    <optgroup label="Semester 10">
-                      <option value="Taxation Law (Income Tax & GST)">Taxation Law (Income Tax & GST)</option>
-                      <option value="Environmental Law">Environmental Law</option>
-                    </optgroup>
+                    <!-- Populated via JS for modularity -->
                   </select>
                 </div>
               </div>
-
               <div class="input-group">
                 <label for="marks-select">Marks / Weightage</label>
                 <div class="select-wrapper">
@@ -157,7 +111,6 @@
               </div>
             </div>
             
-            <!-- Skeleton Loader -->
             <div id="skeletonLoader" class="skeleton-wrapper hidden">
               <div class="skeleton skeleton-title"></div>
               <div class="skeleton skeleton-text"></div>
@@ -166,12 +119,11 @@
               <div class="skeleton skeleton-box"></div>
             </div>
 
-            <div id="outputContent" class="markdown-body">
-              <!-- Answer goes here -->
-            </div>
+            <div id="outputContent" class="markdown-body"></div>
           </section>
         </div>
 
+        <!-- 2. Search Tab -->
         <div id="tab-search" class="tab-content hidden">
           <section class="glass-panel input-section">
             <div class="input-group">
@@ -186,18 +138,173 @@
           </section>
 
           <section class="glass-panel output-section hidden" id="searchOutputSection">
-            <div class="output-header">
-              <h2>Search Results</h2>
-            </div>
+            <div class="output-header"><h2>Search Results</h2></div>
             <div id="searchSkeletonLoader" class="skeleton-wrapper hidden">
+              <div class="skeleton skeleton-box"></div>
+            </div>
+            <div id="searchOutputContent" class="markdown-body"></div>
+          </section>
+        </div>
+
+        <!-- 3. Evaluator Mode -->
+        <div id="tab-evaluator" class="tab-content hidden">
+          <section class="glass-panel input-section">
+            <div class="grid-2-col">
+              <div class="input-group">
+                <label for="evaluator-subject">Subject</label>
+                <div class="select-wrapper">
+                  <select id="evaluator-subject"></select>
+                </div>
+              </div>
+              <div class="input-group">
+                <label for="evaluator-marks">Target Marks</label>
+                <div class="select-wrapper">
+                  <select id="evaluator-marks">
+                    <option value="16">16 Marks</option>
+                    <option value="10">10 Marks</option>
+                    <option value="6">6 Marks</option>
+                    <option value="4">4 Marks</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="input-group">
+              <label for="evaluator-question">Exam Question Context</label>
+              <input type="text" id="evaluator-question" placeholder="The question the student is answering..." />
+            </div>
+
+            <div class="input-group">
+              <label>Upload Script (Image) OR Paste Typed Answer</label>
+              <input type="file" id="evaluator-image" accept="image/png, image/jpeg, image/webp" class="file-input" />
+              <div class="or-divider"><span>OR</span></div>
+              <textarea id="evaluator-text" rows="4" placeholder="Paste typed answer script here..."></textarea>
+            </div>
+            
+            <button id="evaluatorBtn" class="primary-btn pulse-hover">
+              <span class="btn-text" id="evaluatorBtnText">Evaluate Answer Script</span>
+              <div class="spinner hidden" id="evaluatorLoadingSpinner"></div>
+            </button>
+          </section>
+
+          <section class="glass-panel output-section hidden" id="evaluatorOutputSection">
+            <div class="output-header"><h2>Detailed Scorecard</h2></div>
+            <div id="evaluatorSkeleton" class="skeleton-wrapper hidden">
               <div class="skeleton skeleton-box"></div>
               <div class="skeleton skeleton-text"></div>
             </div>
-            <div id="searchOutputContent" class="markdown-body">
-              <!-- Search results table goes here -->
+            
+            <div id="evaluatorDashboard" class="scorecard-dashboard hidden">
+              <div class="scorecard-top">
+                <div class="score-badge" id="evalScore">0 / 16</div>
+                <div class="grade-badge" id="evalGrade">Grade</div>
+              </div>
+              
+              <div class="progress-section">
+                <div class="progress-row">
+                  <div class="progress-label">Statutory Coverage</div>
+                  <div class="progress-bar-bg"><div class="progress-bar-fill" id="prog-stat"></div></div>
+                </div>
+                <div class="progress-row">
+                  <div class="progress-label">Case Law Application</div>
+                  <div class="progress-bar-bg"><div class="progress-bar-fill" id="prog-case"></div></div>
+                </div>
+                <div class="progress-row">
+                  <div class="progress-label">Structure & Formatting</div>
+                  <div class="progress-bar-bg"><div class="progress-bar-fill" id="prog-struct"></div></div>
+                </div>
+                <div class="progress-row">
+                  <div class="progress-label">Legal Precision</div>
+                  <div class="progress-bar-bg"><div class="progress-bar-fill" id="prog-term"></div></div>
+                </div>
+              </div>
+              
+              <div class="feedback-grid">
+                <div class="feedback-box success">
+                  <h3>Strengths</h3>
+                  <ul id="evalStrengths"></ul>
+                </div>
+                <div class="feedback-box warning">
+                  <h3>Weaknesses</h3>
+                  <ul id="evalWeaknesses"></ul>
+                </div>
+              </div>
+              
+              <div class="feedback-box info">
+                <h3>Model Suggestions for Improvement</h3>
+                <ul id="evalTips"></ul>
+              </div>
             </div>
           </section>
         </div>
+
+        <!-- 4. Flashcards Suite -->
+        <div id="tab-flashcards" class="tab-content hidden">
+          <section class="glass-panel input-section" id="flashcardSetupSection">
+            <div class="grid-2-col">
+              <div class="input-group">
+                <label for="flashcard-subject">Subject for Revision</label>
+                <div class="select-wrapper">
+                  <select id="flashcard-subject"></select>
+                </div>
+              </div>
+              <div class="input-group">
+                <label for="flashcard-count">Deck Size</label>
+                <div class="select-wrapper">
+                  <select id="flashcard-count">
+                    <option value="5">5 Cards (Quick Revision)</option>
+                    <option value="10">10 Cards (Standard Deck)</option>
+                    <option value="15">15 Cards (Deep Dive)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            
+            <button id="generateFlashcardsBtn" class="primary-btn pulse-hover">
+              <span class="btn-text" id="fcBtnText">Generate Flashcard Deck</span>
+              <div class="spinner hidden" id="fcLoadingSpinner"></div>
+            </button>
+          </section>
+
+          <section class="glass-panel flashcard-section hidden" id="flashcardViewer">
+            <div class="flashcard-header">
+              <div class="progress-tracker">
+                Card <span id="fcCurrent">1</span> of <span id="fcTotal">5</span>
+              </div>
+              <button id="newDeckBtn" class="action-btn icon-btn">New Deck</button>
+            </div>
+
+            <div class="flashcard-container" id="flashcardContainer">
+              <div class="flashcard-inner">
+                <div class="flashcard-front">
+                  <div class="fc-subject-badge" id="fcFrontSubject">Contract Law</div>
+                  <h2 id="fcFrontTopic">Topic Name</h2>
+                  <h3 id="fcFrontTitle" class="fc-highlight">Case Name / Section</h3>
+                  <p class="fc-hint">Click to flip</p>
+                </div>
+                <div class="flashcard-back">
+                  <div class="fc-details">
+                    <h4>Facts</h4>
+                    <p id="fcBackFacts">...</p>
+                    <h4>Legal Issue</h4>
+                    <p id="fcBackIssue">...</p>
+                    <h4>Ratio Decidendi / Principle</h4>
+                    <p id="fcBackRatio">...</p>
+                    <h4>Bare Act Link</h4>
+                    <p id="fcBackSection">...</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="flashcard-controls">
+              <button id="fcPrevBtn" class="fc-btn secondary-btn" disabled>Previous</button>
+              <button id="fcFlipBtn" class="fc-btn primary-btn">Flip Card</button>
+              <button id="fcNextBtn" class="fc-btn secondary-btn">Next</button>
+            </div>
+          </section>
+        </div>
+
       </main>
       
       <footer>
