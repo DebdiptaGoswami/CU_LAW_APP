@@ -15,7 +15,7 @@ export default async function handler(req, res) {
   try {
     const genAI = new GoogleGenerativeAI(apiKey);
     // Default model for text tasks
-    let model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    let model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
     let prompt = "";
     let result;
 
@@ -44,11 +44,11 @@ You MUST output your evaluation EXACTLY as a JSON object with this schema (no ma
         const imagePart = { inlineData: { data: image, mimeType: "image/jpeg" } };
         
         try {
-          model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+          model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
           result = await model.generateContent([prompt, imagePart]);
         } catch (err) {
-          console.warn("gemini-1.5-flash failed, trying fallback...", err);
-          model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash-8b' });
+          console.warn("gemini-2.5-flash failed, trying fallback...", err);
+          model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
           result = await model.generateContent([prompt, imagePart]);
         }
       } else {
