@@ -1,5 +1,3 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
-
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -13,12 +11,8 @@ export default async function handler(req, res) {
   }
 
   try {
-    const genAI = new GoogleGenerativeAI(apiKey);
-    // Default model for text tasks
-    let model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
     let prompt = "";
-    let result;
-
+    
     if (type === 'evaluate') {
       prompt = `You are a strict, senior Calcutta University (CU) Law Exam Evaluator. 
 Evaluate the provided student answer against standard CU valuation standards for the subject: ${subject || 'Law'}.
@@ -39,23 +33,9 @@ You MUST output your evaluation EXACTLY as a JSON object with this schema (no ma
   "tips": ["<string tip for improvement>", "<string tip>"]
 }`;
 
-      if (image) {
-        // Multimodal call
-        const imagePart = { inlineData: { data: image, mimeType: "image/jpeg" } };
-        
-        try {
-          model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
-          result = await model.generateContent([prompt, imagePart]);
-        } catch (err) {
-          console.warn("gemini-2.5-flash failed, trying fallback...", err);
-          model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
-          result = await model.generateContent([prompt, imagePart]);
-        }
-      } else {
+      if (!image) {
         prompt += `\n\nStudent Answer to Evaluate:\n${textAnswer}`;
-        result = await model.generateContent(prompt);
       }
-
     } else if (type === 'flashcards') {
       prompt = `You are an expert Indian Law Professor. Generate ${count || 5} highly relevant flashcards for the subject: "${subject}".
 Focus on landmark Indian case laws and important statutory sections/maxims.
@@ -71,8 +51,6 @@ You MUST output EXACTLY a JSON array of objects with this schema (no markdown bl
     "section": "<Associated Bare Act Section>"
   }
 ]`;
-      result = await model.generateContent(prompt);
-
     } else if (type === 'search') {
       if (!topic) return res.status(400).json({ error: 'Topic is required for search' });
       
@@ -85,8 +63,6 @@ STRICT RULES:
 3. Include at least 3 to 5 highly relevant landmark cases for the given topic.
 4. Enforce specific statutory updates for criminal law (apply Bharatiya Nyaya Sanhita, Bharatiya Nagarik Suraksha Sanhita, and Bharatiya Sakshya Adhiniyam where applicable).`;
       
-      result = await model.generateContent(prompt);
-
     } else if (type === 'decode') {
       const { section, rawText, statute } = req.body;
       if (!section) return res.status(400).json({ error: 'Section is required for decoding.' });
@@ -120,8 +96,6 @@ If the input belongs to new criminal codes (BNS, BNSS, BSA), clearly state the c
 
 ### 📝 Exam Tip / How to Answer in CU Exams
 A brief, actionable tip on how to incorporate this specific section effectively into a 10-mark or 16-mark Calcutta University exam script.`;
-
-      result = await model.generateContent(prompt);
 
     } else {
       // Default type: 'answer'
@@ -170,16 +144,50 @@ Formatting Rules:
 3. **Tabular Comparison**: Whenever a question asks to distinguish between two concepts, you MUST render a clean, side-by-side Markdown Table with specific parameters of comparison.
 
 ${structureInstructions}`;
-
-      result = await model.generateContent(prompt);
     }
-    
-    const response = await result.response;
-    let text = response.text();
+
+    let inputData = prompt;
+    if (type === 'evaluate' && image) {
+      inputData = [
+        { type: "image", mime_type: "image/jpeg", data: image },
+        { type: "text", text: prompt }
+      ];
+    }
+
+    const requestBody = {
+      model: "gemini-3.6-flash",
+      input: inputData
+    };
+
+    const apiResponse = await fetch("https://generativelanguage.googleapis.com/v1beta2/interactions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-goog-api-key": apiKey
+      },
+      body: JSON.stringify(requestBody)
+    });
+
+    const data = await apiResponse.json();
+
+    if (!apiResponse.ok) {
+      console.error("Gemini API Error:", data);
+      throw new Error(data.error?.message || "Failed to generate response.");
+    }
+
+    const modelStep = data.steps?.find(s => s.type === 'model_output');
+    if (!modelStep || !modelStep.content) {
+      throw new Error("No model output returned in the interaction steps.");
+    }
+
+    let text = modelStep.content
+      .filter(c => c.type === 'text')
+      .map(c => c.text)
+      .join('\\n');
 
     // Clean markdown code blocks from JSON outputs if AI added them
     if (type === 'evaluate' || type === 'flashcards') {
-      text = text.replace(/```json\n?/gi, '').replace(/```\n?/g, '').trim();
+      text = text.replace(/\`\`\`json\\n?/gi, '').replace(/\`\`\`\\n?/g, '').trim();
     }
 
     return res.status(200).json({ answer: text });
