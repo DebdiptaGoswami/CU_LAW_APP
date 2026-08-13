@@ -379,7 +379,8 @@ document.getElementById('searchBtn').addEventListener('click', async () => {
 // Extra Action Toolbar Handlers
 document.getElementById('copyBtn').addEventListener('click', async () => {
   if (!currentRawMarkdown) return;
-  try { await navigator.clipboard.writeText(currentRawMarkdown); showToast('Markdown copied to clipboard!'); } catch (err) {}
+  const attribution = "\n\n---\n*Generated via CU Law Exam Engine | Designed by Debdipta Goswami*";
+  try { await navigator.clipboard.writeText(currentRawMarkdown + attribution); showToast('Markdown copied to clipboard!'); } catch (err) {}
 });
 
 let isSpeaking = false;
@@ -393,4 +394,65 @@ document.getElementById('readAloudBtn').addEventListener('click', () => {
   window.speechSynthesis.speak(utt);
   isSpeaking = true;
   showToast('Reading answer aloud... (Click again to stop)');
+});
+
+// PDF Download
+document.getElementById('downloadPdfBtn').addEventListener('click', () => {
+  const element = document.getElementById('outputContent');
+  if (!element.innerHTML.trim()) return;
+  
+  const wrapper = document.createElement('div');
+  wrapper.innerHTML = element.innerHTML;
+  wrapper.className = 'markdown-body';
+  wrapper.style.color = '#000';
+  wrapper.style.backgroundColor = '#fff';
+  wrapper.style.padding = '20px';
+  wrapper.style.fontSize = '12pt';
+  
+  // Add attribution to PDF
+  const attribution = document.createElement('div');
+  attribution.innerHTML = '<hr><p style="text-align: center; font-style: italic; color: #666; font-size: 0.9rem;">Generated via CU Law Exam Engine | Designed by Debdipta Goswami</p>';
+  wrapper.appendChild(attribution);
+  
+  const headings = wrapper.querySelectorAll('h1, h2, h3, strong');
+  headings.forEach(h => h.style.color = '#000');
+  
+  const blockquotes = wrapper.querySelectorAll('blockquote');
+  blockquotes.forEach(bq => {
+    bq.style.color = '#333';
+    bq.style.backgroundColor = '#f9f9f9';
+    bq.style.borderLeftColor = '#8a2be2';
+  });
+
+  const opt = {
+    margin:       0.75,
+    filename:     'CU_Law_Answer_Script.pdf',
+    image:        { type: 'jpeg', quality: 0.98 },
+    html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
+    jsPDF:        { unit: 'in', format: 'A4', orientation: 'portrait' }
+  };
+  
+  html2pdf().set(opt).from(wrapper).save();
+  showToast('PDF Downloading...');
+});
+
+// Developer Modal Logic
+const devOverlay = document.getElementById('developer-modal-overlay');
+const openDevBtn = document.getElementById('aboutDeveloperBtn');
+const closeDevBtn = document.getElementById('closeDeveloperModalBtn');
+
+const openDevModal = () => {
+  devOverlay.classList.remove('hidden');
+  setTimeout(() => devOverlay.classList.add('show'), 10);
+};
+
+const closeDevModal = () => {
+  devOverlay.classList.remove('show');
+  setTimeout(() => devOverlay.classList.add('hidden'), 300);
+};
+
+if(openDevBtn) openDevBtn.addEventListener('click', openDevModal);
+if(closeDevBtn) closeDevBtn.addEventListener('click', closeDevModal);
+if(devOverlay) devOverlay.addEventListener('click', (e) => {
+  if (e.target === devOverlay) closeDevModal();
 });
