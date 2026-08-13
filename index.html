@@ -25,9 +25,13 @@
       </header>
 
       <main>
-        <!-- Settings section removed for server-side API Key handling -->
+        <div class="tab-container">
+          <button class="tab-btn active" data-tab="tab-generator">Answer Generator</button>
+          <button class="tab-btn" data-tab="tab-search">Case Law Search</button>
+        </div>
 
-        <section class="glass-panel input-section">
+        <div id="tab-generator" class="tab-content">
+          <section class="glass-panel input-section">
           <div class="input-group">
             <label for="subject-select">Subject</label>
             <select id="subject-select">
@@ -120,6 +124,30 @@
             <!-- Answer goes here -->
           </div>
         </section>
+        </div>
+
+        <div id="tab-search" class="tab-content hidden">
+          <section class="glass-panel input-section">
+            <div class="input-group">
+              <label for="search-topic">Legal Topic / Concept</label>
+              <input type="text" id="search-topic" placeholder="e.g. Free Consent, Minor Agreement" />
+            </div>
+            
+            <button id="searchBtn" class="primary-btn">
+              <span class="btn-text" id="searchBtnText">Search Cases</span>
+              <div class="spinner hidden" id="searchLoadingSpinner"></div>
+            </button>
+          </section>
+
+          <section class="glass-panel output-section hidden" id="searchOutputSection">
+            <div class="output-header">
+              <h2>Search Results</h2>
+            </div>
+            <div id="searchOutputContent" class="markdown-body">
+              <!-- Search results table goes here -->
+            </div>
+          </section>
+        </div>
       </main>
       
       <footer>

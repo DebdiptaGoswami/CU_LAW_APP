@@ -130,3 +130,79 @@ downloadPdfBtn.addEventListener('click', () => {
   
   html2pdf().set(opt).from(wrapper).save();
 });
+
+// Tab Switching Logic
+const tabBtns = document.querySelectorAll('.tab-btn');
+const tabContents = document.querySelectorAll('.tab-content');
+
+tabBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    // Remove active class from all buttons and hide all contents
+    tabBtns.forEach(b => b.classList.remove('active'));
+    tabContents.forEach(c => c.classList.add('hidden'));
+
+    // Add active class to clicked button and show corresponding content
+    btn.classList.add('active');
+    const tabId = btn.getAttribute('data-tab');
+    document.getElementById(tabId).classList.remove('hidden');
+  });
+});
+
+// DOM Elements for Search
+const searchTopicInput = document.getElementById('search-topic');
+const searchBtn = document.getElementById('searchBtn');
+const searchBtnText = document.getElementById('searchBtnText');
+const searchLoadingSpinner = document.getElementById('searchLoadingSpinner');
+const searchOutputSection = document.getElementById('searchOutputSection');
+const searchOutputContent = document.getElementById('searchOutputContent');
+
+const searchCases = async () => {
+  const topic = searchTopicInput.value.trim();
+
+  if (!topic) {
+    alert('Please enter a legal topic to search.');
+    return;
+  }
+
+  // UI state updates
+  searchBtn.disabled = true;
+  searchBtnText.textContent = 'Searching...';
+  searchLoadingSpinner.classList.remove('hidden');
+  searchOutputSection.classList.add('hidden');
+  searchOutputContent.innerHTML = '';
+
+  try {
+    const res = await fetch('/api/generate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ type: 'search', topic }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || 'Server responded with an error');
+    }
+
+    // Parse Markdown and update UI
+    searchOutputContent.innerHTML = marked.parse(data.answer);
+    searchOutputSection.classList.remove('hidden');
+    
+  } catch (error) {
+    console.error('Error searching cases:', error);
+    alert(`Error: ${error.message || 'Failed to search cases. Please try again.'}`);
+  } finally {
+    searchBtn.disabled = false;
+    searchBtnText.textContent = 'Search Cases';
+    searchLoadingSpinner.classList.add('hidden');
+  }
+};
+
+searchBtn.addEventListener('click', searchCases);
+searchTopicInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    searchCases();
+  }
+});

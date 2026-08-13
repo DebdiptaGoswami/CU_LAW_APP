@@ -5,11 +5,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { question, subject, marks } = req.body;
-
-  if (!question) {
-    return res.status(400).json({ error: 'Question is required' });
-  }
+  const { type, topic, question, subject, marks } = req.body;
 
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
@@ -19,10 +15,34 @@ export default async function handler(req, res) {
   try {
     const genAI = new GoogleGenerativeAI(apiKey);
     let model = genAI.getGenerativeModel({ model: 'gemini-3.1-pro' });
+    let prompt = "";
 
-    let structureInstructions = "";
-    if (marks === "16") {
-      structureInstructions = `
+    if (type === 'search') {
+      if (!topic) {
+        return res.status(400).json({ error: 'Topic is required for search' });
+      }
+      
+      prompt = `You are an expert Indian Legal Researcher. 
+Your task is to provide a highly structured, accurate Markdown table referencing case laws and statutory sections for the legal topic: "${topic}".
+
+STRICT RULES:
+1. Output ONLY a single Markdown table. Do not include any introductory, explanatory, or concluding text.
+2. The table must have exactly these 4 columns: 
+   - Topic
+   - Statutory Section
+   - Landmark Cases
+   - Key Principle (Ratio)
+3. Include at least 3 to 5 highly relevant landmark cases for the given topic.
+4. Enforce specific statutory updates for criminal law (apply Bharatiya Nyaya Sanhita, Bharatiya Nagarik Suraksha Sanhita, and Bharatiya Sakshya Adhiniyam where applicable).`;
+
+    } else {
+      if (!question) {
+        return res.status(400).json({ error: 'Question is required' });
+      }
+
+      let structureInstructions = "";
+      if (marks === "16") {
+        structureInstructions = `
 Structure the answer precisely for a 16-Mark Comprehensive Essay (approx 1,000-1,200 words):
 1. **Introduction & Meaning**: Define the core concepts clearly with *Latin maxims* if applicable.
 2. **Relevant Legal Provisions**: Explicit exhaustive analysis quoting Bare Act provisions and breaking down essential ingredients.
@@ -34,22 +54,22 @@ Structure the answer precisely for a 16-Mark Comprehensive Essay (approx 1,000-1
 4. **Illustrations**: Provide practical examples to demonstrate the application of the law.
 5. **Exceptions/Differences**: If applicable, use a Markdown Table for differences.
 6. **Conclusion**: A strong concluding paragraph summarizing the legal position.`;
-    } else if (marks === "10") {
-      structureInstructions = `
+      } else if (marks === "10") {
+        structureInstructions = `
 Structure the answer for a 10-Mark Standard Answer (approx 600-800 words):
 1. **Introduction**: Brief definition of the concept.
 2. **Core Statutory Sections**: Highlight the primary sections and ingredients in bullet points.
 3. **Key Case Laws**: Discuss 2-3 landmark precedents with clear subheadings (Facts, Issue, Held).
 4. **Conclusion**: A brief wrap-up.`;
-    } else {
-      structureInstructions = `
+      } else {
+        structureInstructions = `
 Structure the answer for a 4/6-Mark Short Note (approx 250-350 words):
 1. **Core Definition**: Direct explanation of the concept.
 2. **Essential Ingredients**: Bullet points listing conditions/requirements.
 3. **Landmark Case**: Briefly cite exactly 1 key case without filler text.`;
-    }
+      }
 
-    const prompt = `You are an expert Indian Law Professor at Calcutta University (CU). 
+      prompt = `You are an expert Indian Law Professor at Calcutta University (CU). 
 Your task is to write a high-scoring exam answer for a BA LLB student studying the subject: "${subject || 'General Law'}".
 
 Topic/Question: "${question}"
@@ -63,6 +83,7 @@ Formatting Rules:
 3. **Tabular Comparison**: Whenever a question asks to distinguish between two concepts, you MUST render a clean, side-by-side Markdown Table with specific parameters of comparison.
 
 ${structureInstructions}`;
+    }
 
     let result;
     try {

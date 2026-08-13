@@ -110,6 +110,39 @@ header p {
   font-size: 1.1rem;
 }
 
+/* Tabs */
+.tab-container {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.tab-btn {
+  flex: 1;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  color: #a0a5b1;
+  padding: 1rem;
+  border-radius: 12px;
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(16px);
+}
+
+.tab-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+}
+
+.tab-btn.active {
+  background: linear-gradient(135deg, rgba(138, 43, 226, 0.2), rgba(75, 0, 130, 0.2));
+  border-color: var(--accent-primary);
+  color: #fff;
+  font-weight: 600;
+}
+
 /* Glass Panels */
 .glass-panel {
   background: var(--glass-bg);
@@ -345,6 +378,32 @@ select option, select optgroup {
 
 .markdown-body strong {
   color: #fff;
+}
+
+.markdown-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1.5rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.markdown-body th, .markdown-body td {
+  padding: 1rem;
+  border: 1px solid var(--glass-border);
+  text-align: left;
+}
+
+.markdown-body th {
+  background: rgba(138, 43, 226, 0.15);
+  color: #fff;
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+}
+
+.markdown-body tr:hover {
+  background: rgba(255, 255, 255, 0.05);
 }
 
 /* Footer */
