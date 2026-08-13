@@ -167,6 +167,43 @@ input:focus, textarea:focus {
 }
 
 /* Buttons */
+.button-group {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+}
+
+.button-group > button {
+  flex: 1;
+}
+
+.secondary-btn {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  font-family: var(--font-heading);
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.3s ease;
+}
+
+.secondary-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.secondary-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .primary-btn {
   background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
   color: white;
