@@ -5,7 +5,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { question } = req.body;
+  const { question, subject, marks } = req.body;
 
   if (!question) {
     return res.status(400).json({ error: 'Question is required' });
@@ -20,31 +20,49 @@ export default async function handler(req, res) {
     const genAI = new GoogleGenerativeAI(apiKey);
     let model = genAI.getGenerativeModel({ model: 'gemini-3.1-pro' });
 
+    let structureInstructions = "";
+    if (marks === "16") {
+      structureInstructions = `
+Structure the answer precisely for a 16-Mark Comprehensive Essay (approx 1,000-1,200 words):
+1. **Introduction & Meaning**: Define the core concepts clearly with *Latin maxims* if applicable.
+2. **Relevant Legal Provisions**: Explicit exhaustive analysis quoting Bare Act provisions and breaking down essential ingredients.
+3. **Leading Case Laws**: Detailed analysis of 2-3 landmark cases using this strict format:
+   - **Case Name & Citation**: (e.g., Mohori Bibee v. Dharmodas Ghose (1903) 30 I.A. 114)
+   - **Facts**: Concise summary of what happened.
+   - **Legal Point / Issue**: The legal question raised.
+   - **Held / Principle**: The exact ratio decidendi given by the court.
+4. **Illustrations**: Provide practical examples to demonstrate the application of the law.
+5. **Exceptions/Differences**: If applicable, use a Markdown Table for differences.
+6. **Conclusion**: A strong concluding paragraph summarizing the legal position.`;
+    } else if (marks === "10") {
+      structureInstructions = `
+Structure the answer for a 10-Mark Standard Answer (approx 600-800 words):
+1. **Introduction**: Brief definition of the concept.
+2. **Core Statutory Sections**: Highlight the primary sections and ingredients in bullet points.
+3. **Key Case Laws**: Discuss 2-3 landmark precedents with clear subheadings (Facts, Issue, Held).
+4. **Conclusion**: A brief wrap-up.`;
+    } else {
+      structureInstructions = `
+Structure the answer for a 4/6-Mark Short Note (approx 250-350 words):
+1. **Core Definition**: Direct explanation of the concept.
+2. **Essential Ingredients**: Bullet points listing conditions/requirements.
+3. **Landmark Case**: Briefly cite exactly 1 key case without filler text.`;
+    }
+
     const prompt = `You are an expert Indian Law Professor at Calcutta University (CU). 
-Your task is to write a comprehensive, high-scoring 16-mark exam answer for a BA LLB student. 
-The answer must be approximately 1,000 words and strictly follow the typical high-scoring structure found in CU Law study materials.
+Your task is to write a high-scoring exam answer for a BA LLB student studying the subject: "${subject || 'General Law'}".
 
 Topic/Question: "${question}"
 
 Tone & Style: Use an academic, authoritative, and traditional Indian legal writing style. Avoid conversational fluff or modern corporate language.
+Statutory Mandate: Enforce specific statutory updates for criminal law (apply Bharatiya Nyaya Sanhita, Bharatiya Nagarik Suraksha Sanhita, and Bharatiya Sakshya Adhiniyam where applicable).
 
 Formatting Rules:
 1. **Key Terms**: Automatically **bold** statutory sections and landmark case names. Use *italics* for Latin maxims.
-2. **Concise Bare Act Quoting**: Quote the statutory section definition, then immediately break down its Essential Ingredients into numbered bullet points instead of long paragraphs.
-3. **Structured Case Law Presentation**: Discuss at least 2-3 landmark cases. Every case must strictly use this sub-bullet format:
-   - **Case Name & Citation**: (e.g., Mohori Bibee v. Dharmodas Ghose (1903) 30 I.A. 114)
-   - **Facts**: Concise 2-line summary of what happened.
-   - **Legal Point / Issue**: The legal question raised.
-   - **Held / Principle**: The exact ratio decidendi given by the court.
-4. **Tabular Comparison**: Whenever a question asks to distinguish between two concepts (e.g., Indemnity vs. Guarantee, Void vs. Voidable), you MUST force the output to render a clean, side-by-side Markdown Table with specific parameters of comparison.
+2. **Concise Bare Act Quoting**: Break down essential ingredients into numbered bullet points instead of long paragraphs.
+3. **Tabular Comparison**: Whenever a question asks to distinguish between two concepts, you MUST render a clean, side-by-side Markdown Table with specific parameters of comparison.
 
-Structure the answer precisely as follows:
-1. **Introduction & Meaning**: Define the core concepts clearly with *Latin maxims* if applicable.
-2. **Relevant Legal Provisions & Essential Ingredients**: Quote the statutory definition concisely and break down ingredients as per Rule 2.
-3. **Leading Case Laws**: Apply the strict structure as per Rule 3.
-4. **Illustrations**: Provide 1 or 2 practical examples to demonstrate the application of the law.
-5. **Exceptions/Differences** (if applicable based on the question, use a Markdown Table for differences as per Rule 4).
-6. **Conclusion**: A strong concluding paragraph summarizing the legal position.`;
+${structureInstructions}`;
 
     let result;
     try {

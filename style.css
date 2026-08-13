@@ -143,7 +143,7 @@ label {
   color: #f1f2f6;
 }
 
-input, textarea {
+input, textarea, select {
   background: var(--input-bg);
   border: 1px solid var(--glass-border);
   border-radius: 8px;
@@ -155,10 +155,15 @@ input, textarea {
   resize: vertical;
 }
 
-input:focus, textarea:focus {
+input:focus, textarea:focus, select:focus {
   outline: none;
   border-color: var(--accent-primary);
   box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.2);
+}
+
+select option, select optgroup {
+  background-color: var(--bg-color);
+  color: var(--text-color);
 }
 
 .help-text {

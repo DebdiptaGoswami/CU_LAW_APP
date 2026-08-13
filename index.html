@@ -29,7 +29,69 @@
 
         <section class="glass-panel input-section">
           <div class="input-group">
-            <label for="question">Exam Question (16 Marks)</label>
+            <label for="subject-select">Subject</label>
+            <select id="subject-select">
+              <optgroup label="Semester 1">
+                <option value="General Principles of Law of Contract">General Principles of Law of Contract</option>
+                <option value="Family Law - I">Family Law - I</option>
+              </optgroup>
+              <optgroup label="Semester 2">
+                <option value="Special Contract">Special Contract</option>
+                <option value="Family Law - II">Family Law - II</option>
+              </optgroup>
+              <optgroup label="Semester 3">
+                <option value="Competition Law">Competition Law</option>
+                <option value="Law of Torts including MV Accident and Consumer Protection Laws">Law of Torts including MV Accident and Consumer Protection Laws</option>
+              </optgroup>
+              <optgroup label="Semester 4">
+                <option value="Constitutional Law - I">Constitutional Law - I</option>
+                <option value="Law of Crimes - I (Bharatiya Nyaya Sanhita)">Law of Crimes - I (Bharatiya Nyaya Sanhita)</option>
+                <option value="Land Laws including Ceiling and Other Local Laws">Land Laws including Ceiling and Other Local Laws</option>
+              </optgroup>
+              <optgroup label="Semester 5">
+                <option value="Constitutional Law - II">Constitutional Law - II</option>
+                <option value="Administrative Law">Administrative Law</option>
+                <option value="Property Law">Property Law</option>
+              </optgroup>
+              <optgroup label="Semester 6">
+                <option value="Law of Crimes - II (Bharatiya Nagarik Suraksha Sanhita)">Law of Crimes - II (Bharatiya Nagarik Suraksha Sanhita)</option>
+                <option value="Civil Procedure Code and Limitation">Civil Procedure Code and Limitation</option>
+                <option value="Law of Copyright">Law of Copyright</option>
+                <option value="Jurisprudence and Legal Theory">Jurisprudence and Legal Theory</option>
+              </optgroup>
+              <optgroup label="Semester 7">
+                <option value="Public International Law">Public International Law</option>
+                <option value="Banking Law">Banking Law</option>
+                <option value="Law of Evidence (Bharatiya Sakshya Adhiniyam)">Law of Evidence (Bharatiya Sakshya Adhiniyam)</option>
+              </optgroup>
+              <optgroup label="Semester 8">
+                <option value="Human Rights Law and Practice">Human Rights Law and Practice</option>
+                <option value="Interpretation of Statutes and Principles of Legislation">Interpretation of Statutes and Principles of Legislation</option>
+                <option value="Labour and Industrial Law - I">Labour and Industrial Law - I</option>
+              </optgroup>
+              <optgroup label="Semester 9">
+                <option value="Company Law">Company Law</option>
+                <option value="Information Technology Law">Information Technology Law</option>
+                <option value="Labour and Industrial Laws - II">Labour and Industrial Laws - II</option>
+              </optgroup>
+              <optgroup label="Semester 10">
+                <option value="Taxation Law (Income Tax & GST)">Taxation Law (Income Tax & GST)</option>
+                <option value="Environmental Law">Environmental Law</option>
+              </optgroup>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label for="marks-select">Marks / Weightage</label>
+            <select id="marks-select">
+              <option value="16">16 Marks (1,000–1,200 Words - Comprehensive Essay Answer)</option>
+              <option value="10">10 Marks (600–800 Words - Standard Main Answer)</option>
+              <option value="4/6">4/6 Marks (250–350 Words - Short Note / Focused Concept)</option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label for="question">Exam Question</label>
             <textarea id="question" rows="4" placeholder="e.g. Define privity of contract along with its exceptions. Discuss with the help of case laws."></textarea>
           </div>
           

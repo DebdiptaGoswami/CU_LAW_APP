@@ -1,6 +1,8 @@
 import { marked } from 'marked';
 
 // DOM Elements
+const subjectSelect = document.getElementById('subject-select');
+const marksSelect = document.getElementById('marks-select');
 const questionInput = document.getElementById('question');
 const generateBtn = document.getElementById('generateBtn');
 const downloadPdfBtn = document.getElementById('downloadPdfBtn');
@@ -14,6 +16,8 @@ const copyBtn = document.getElementById('copyBtn');
 
 const generateAnswer = async () => {
   const question = questionInput.value.trim();
+  const subject = subjectSelect.value;
+  const marks = marksSelect.value;
 
   if (!question) {
     alert('Please enter an exam question.');
@@ -34,7 +38,7 @@ const generateAnswer = async () => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ question }),
+      body: JSON.stringify({ question, subject, marks }),
     });
 
     const data = await res.json();
