@@ -1,19 +1,19 @@
 :root {
-  /* Midnight Chambers (Dark Theme) */
-  --bg-canvas: #0e0a08;
-  --bg-surface: rgba(26, 18, 14, 0.85);
-  --bg-surface-elevated: rgba(38, 26, 20, 0.95);
-  --border-subtle: rgba(197, 160, 89, 0.15);
-  --border-glow: rgba(218, 165, 32, 0.35);
-  --text-primary: #fbf7ee;
-  --text-secondary: #b8a695;
-  --accent-gold: #cfa75c;
-  --accent-wood: #7a3422;
-  --accent-badge: rgba(197, 160, 89, 0.12);
+  /* The Supreme Court Library (Light Theme) */
+  --bg-canvas: #f8f4ec;
+  --bg-surface: #ffffff;
+  --bg-surface-elevated: #f1ebe0;
+  --border-subtle: rgba(74, 31, 20, 0.12);
+  --border-glow: rgba(139, 58, 43, 0.3);
+  --text-primary: #1f140e;
+  --text-secondary: #5e4d42;
+  --accent-gold: #a37a2c;
+  --accent-wood: #5c2417;
+  --accent-badge: rgba(92, 36, 23, 0.08);
 
   /* Colors Mapping */
   --colors-primary: var(--accent-wood);
-  --colors-primary-active: #5c2417;
+  --colors-primary-active: #7a3422;
   --colors-secondary: var(--bg-surface-elevated);
   --colors-accent-sky: #62aef0;
   --colors-accent-purple: #d6b6f6;
@@ -30,8 +30,8 @@
   --colors-hairline: var(--border-subtle);
   --colors-ink: var(--text-primary);
   --colors-ink-secondary: var(--text-secondary);
-  --colors-ink-muted: rgba(251, 247, 238, 0.6);
-  --colors-ink-faint: rgba(251, 247, 238, 0.4);
+  --colors-ink-muted: rgba(31, 20, 14, 0.6);
+  --colors-ink-faint: rgba(31, 20, 14, 0.4);
   --colors-on-primary: #ffffff;
 
   /* Typography */
@@ -56,25 +56,25 @@
   --rounded-full: 9999px;
 
   /* Shadows */
-  --shadow-level-1: 0 4px 12px rgba(0,0,0,0.5);
-  --shadow-level-2: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  --shadow-level-1: 0 4px 12px rgba(0,0,0,0.05);
+  --shadow-level-2: 0 8px 32px 0 rgba(0, 0, 0, 0.08);
 }
 
-[data-theme="light"] {
-  /* The Supreme Court Library (Light Theme) */
-  --bg-canvas: #f8f4ec;
-  --bg-surface: #ffffff;
-  --bg-surface-elevated: #f1ebe0;
-  --border-subtle: rgba(74, 31, 20, 0.12);
-  --border-glow: rgba(139, 58, 43, 0.3);
-  --text-primary: #1f140e;
-  --text-secondary: #5e4d42;
-  --accent-gold: #a37a2c;
-  --accent-wood: #5c2417;
-  --accent-badge: rgba(92, 36, 23, 0.08);
+[data-theme="dark"] {
+  /* Midnight Chambers (Dark Theme) */
+  --bg-canvas: #0e0a08;
+  --bg-surface: rgba(26, 18, 14, 0.85);
+  --bg-surface-elevated: rgba(38, 26, 20, 0.95);
+  --border-subtle: rgba(197, 160, 89, 0.15);
+  --border-glow: rgba(218, 165, 32, 0.35);
+  --text-primary: #fbf7ee;
+  --text-secondary: #b8a695;
+  --accent-gold: #cfa75c;
+  --accent-wood: #7a3422;
+  --accent-badge: rgba(197, 160, 89, 0.12);
 
   --colors-primary: var(--accent-wood);
-  --colors-primary-active: #7a3422;
+  --colors-primary-active: #5c2417;
   --colors-secondary: var(--bg-surface-elevated);
   --colors-canvas: var(--bg-canvas);
   --colors-surface: var(--bg-surface);
@@ -82,12 +82,12 @@
   --colors-hairline: var(--border-subtle);
   --colors-ink: var(--text-primary);
   --colors-ink-secondary: var(--text-secondary);
-  --colors-ink-muted: rgba(31, 20, 14, 0.6);
-  --colors-ink-faint: rgba(31, 20, 14, 0.4);
+  --colors-ink-muted: rgba(251, 247, 238, 0.6);
+  --colors-ink-faint: rgba(251, 247, 238, 0.4);
   --colors-on-primary: #ffffff;
 
-  --shadow-level-1: 0 4px 12px rgba(0,0,0,0.05);
-  --shadow-level-2: 0 8px 32px 0 rgba(0, 0, 0, 0.08);
+  --shadow-level-1: 0 4px 12px rgba(0,0,0,0.5);
+  --shadow-level-2: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 }
 
 * {
@@ -326,6 +326,11 @@ body {
   border-bottom: 1px solid var(--colors-hairline);
   padding-bottom: var(--spacing-xs);
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.tab-container::-webkit-scrollbar {
+  display: none;
 }
 
 .tab-btn {
@@ -427,13 +432,13 @@ select {
 }
 
 option, optgroup {
-  background-color: #1a120e;
-  color: #fbf7ee;
-}
-
-[data-theme="light"] option, [data-theme="light"] optgroup {
   background-color: #f1ebe0;
   color: #1f140e;
+}
+
+[data-theme="dark"] option, [data-theme="dark"] optgroup {
+  background-color: #1a120e;
+  color: #fbf7ee;
 }
 
 .text-input:focus, select:focus, textarea:focus {
@@ -655,5 +660,23 @@ footer {
 @media (max-width: 768px) {
   .grid-2-col { grid-template-columns: 1fr; }
   .feedback-grid { grid-template-columns: 1fr; }
-  .hero-band { padding: 60px var(--spacing-md); }
+  .hero-band { padding: 40px var(--spacing-sm); }
+  .display-1 { font-size: 40px; }
+  .display-2 { font-size: 32px; }
+  .heading-1 { font-size: 28px; }
+  
+  .nav-bar { flex-wrap: wrap; gap: var(--spacing-sm); padding: var(--spacing-sm); justify-content: center; }
+  .nav-links { width: 100%; justify-content: center; gap: var(--spacing-sm); }
+  .nav-brand { margin: 0 auto; width: 100%; justify-content: center; margin-bottom: var(--spacing-xs); }
+  
+  .tab-btn { font-size: 14px; white-space: nowrap; padding: var(--spacing-xs) var(--spacing-sm); }
+  .content-container { padding: var(--spacing-md) var(--spacing-sm); }
+  .button-primary, .button-secondary, .button-utility { font-size: 14px; }
+  
+  .flashcard-container { height: 400px; }
+  .fc-subject-badge { font-size: 11px; }
+  .flashcard-front h2 { font-size: 20px; }
+  .flashcard-front h3 { font-size: 16px; }
+  
+  .score-badge { font-size: 32px; }
 }

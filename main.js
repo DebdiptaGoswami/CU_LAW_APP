@@ -59,31 +59,35 @@ const themeIconDark = document.getElementById('themeIconDark');
 const themeIconLight = document.getElementById('themeIconLight');
 
 if (themeToggleBtn) {
-  let savedTheme = 'dark';
+  let savedTheme = 'light';
   try {
-    savedTheme = localStorage.getItem('cu_law_theme') || 'dark';
+    savedTheme = localStorage.getItem('cu_law_theme') || 'light';
   } catch (e) {
     console.warn("localStorage not available", e);
   }
 
-  if (savedTheme === 'light') {
-    document.documentElement.setAttribute('data-theme', 'light');
+  if (savedTheme === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    if (themeIconLight) themeIconLight.classList.add('hidden');
+    if (themeIconDark) themeIconDark.classList.remove('hidden');
+  } else {
+    document.documentElement.removeAttribute('data-theme');
     if (themeIconDark) themeIconDark.classList.add('hidden');
     if (themeIconLight) themeIconLight.classList.remove('hidden');
   }
 
   themeToggleBtn.addEventListener('click', () => {
-    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
     const newTheme = currentTheme === 'light' ? 'dark' : 'light';
 
-    if (newTheme === 'light') {
-      document.documentElement.setAttribute('data-theme', 'light');
-      if (themeIconDark) themeIconDark.classList.add('hidden');
-      if (themeIconLight) themeIconLight.classList.remove('hidden');
+    if (newTheme === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      if (themeIconLight) themeIconLight.classList.add('hidden');
+      if (themeIconDark) themeIconDark.classList.remove('hidden');
     } else {
       document.documentElement.removeAttribute('data-theme');
-      if (themeIconDark) themeIconDark.classList.remove('hidden');
-      if (themeIconLight) themeIconLight.classList.add('hidden');
+      if (themeIconDark) themeIconDark.classList.add('hidden');
+      if (themeIconLight) themeIconLight.classList.remove('hidden');
     }
 
     try {
