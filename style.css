@@ -182,24 +182,29 @@ body {
     radial-gradient(circle at 25% 20%, rgba(255,255,255,0.2) 2px, transparent 3px),
     radial-gradient(circle at 50% 90%, rgba(255,255,255,0.1) 1px, transparent 2px);
   background-size: cover;
-  color: #ffffff;
+  color: var(--colors-ink);
   padding: 80px var(--spacing-lg) 100px;
   text-align: center;
   position: relative;
   overflow: hidden;
+  z-index: 1;
 }
 
 .hero-band h1 {
-  color: #ffffff;
+  color: var(--colors-ink);
   margin-bottom: var(--spacing-md);
+  position: relative;
+  z-index: 2;
 }
 
 .hero-band p {
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--colors-ink-secondary);
   font-size: 20px;
   max-width: 600px;
   margin: 0 auto var(--spacing-xl);
   line-height: 1.4;
+  position: relative;
+  z-index: 2;
 }
 
 /* Stickers in Hero (Decorative) */
@@ -211,7 +216,7 @@ body {
   height: 48px;
   box-shadow: 0 0 25px currentColor;
   animation: float 6s ease-in-out infinite;
-  z-index: 10;
+  z-index: 0;
 }
 @keyframes float {
   0%, 100% { transform: translateY(0) rotate(var(--rotation, 0deg)); }
