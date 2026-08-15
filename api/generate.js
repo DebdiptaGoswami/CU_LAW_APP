@@ -108,13 +108,14 @@ A brief, actionable tip on how to incorporate this specific section effectively 
       try {
         if (process.env.PINECONE_API_KEY) {
           const pinecone = new Pinecone({ apiKey: process.env.PINECONE_API_KEY });
-          const ai = new GoogleGenAI({ apiKey: apiKey });
-          
-          const embedResponse = await ai.models.embedContent({
-            model: 'text-embedding-004',
-            contents: question,
+          const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:embedContent', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
+            body: JSON.stringify({ content: { parts: [{ text: question }] } })
           });
-          const queryVector = embedResponse.embeddings[0].values;
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error?.message || 'Embedding failed');
+          const queryVector = data.embedding.values;
           
           const index = pinecone.Index('cu-law-index');
           
@@ -185,26 +186,44 @@ Formatting Rules:
 ${structureInstructions}`;
     }
 
-    const ai = new GoogleGenAI({ apiKey: apiKey });
-    
-    let contents = prompt;
+    let inputData = prompt;
     if (type === 'evaluate' && image) {
-      contents = [
-        { inlineData: { mimeType: "image/jpeg", data: image } },
-        { text: prompt }
+      inputData = [
+        { type: "image", mime_type: "image/jpeg", data: image },
+        { type: "text", text: prompt }
       ];
     }
 
-    const response = await ai.models.generateContent({
+    const requestBody = {
       model: "gemini-2.5-flash",
-      contents: contents
+      input: inputData
+    };
+
+    const apiResponse = await fetch("https://generativelanguage.googleapis.com/v1beta/interactions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-goog-api-key": apiKey
+      },
+      body: JSON.stringify(requestBody)
     });
 
-    if (!response.text) {
-      throw new Error("No model output returned.");
+    const data = await apiResponse.json();
+
+    if (!apiResponse.ok) {
+      console.error("Gemini API Error:", data);
+      throw new Error(data.error?.message || "Failed to generate response.");
     }
 
-    let text = response.text;
+    const modelStep = data.steps?.find(s => s.type === 'model_output');
+    if (!modelStep || !modelStep.content) {
+      throw new Error("No model output returned in the interaction steps.");
+    }
+
+    let text = modelStep.content
+      .filter(c => c.type === 'text')
+      .map(c => c.text)
+      .join('\n');
 
     // Clean markdown code blocks from JSON outputs if AI added them
     if (type === 'evaluate' || type === 'flashcards') {
