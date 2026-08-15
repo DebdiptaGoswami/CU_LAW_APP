@@ -1,3 +1,6 @@
+import { Pinecone } from '@pinecone-database/pinecone';
+import { GoogleGenAI } from '@google/genai';
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -101,6 +104,35 @@ A brief, actionable tip on how to incorporate this specific section effectively 
       // Default type: 'answer'
       if (!question) return res.status(400).json({ error: 'Question is required' });
 
+      let retrievedChunks = [];
+      try {
+        if (process.env.PINECONE_API_KEY) {
+          const pinecone = new Pinecone({ apiKey: process.env.PINECONE_API_KEY });
+          const ai = new GoogleGenAI({ apiKey: apiKey });
+          
+          const embedResponse = await ai.models.embedContent({
+            model: 'text-embedding-004',
+            contents: question,
+          });
+          const queryVector = embedResponse.embeddings[0].values;
+          
+          const index = pinecone.Index('cu-law-index');
+          
+          const filter = subject ? { subject: subject } : undefined;
+          
+          const queryResponse = await index.query({
+            vector: queryVector,
+            topK: 3,
+            includeMetadata: true,
+            filter: filter
+          });
+          
+          retrievedChunks = queryResponse.matches.map(m => m.metadata.textChunk);
+        }
+      } catch (err) {
+        console.error("RAG Retrieval Error:", err);
+      }
+
       let structureInstructions = "";
       if (marks === "16") {
         structureInstructions = `
@@ -130,7 +162,14 @@ Structure the answer for a 4/6-Mark Short Note (approx 250-350 words):
 3. **Landmark Case**: Briefly cite exactly 1 key case without filler text.`;
       }
 
-      prompt = `You are an expert Indian Law Professor at Calcutta University (CU). 
+      prompt = `You are an expert Calcutta University (CU) Law Professor. 
+Generate a high-scoring answer using the provided GROUND-TRUTH MATERIAL below whenever relevant.
+
+[GROUND-TRUTH CONTEXT]:
+${retrievedChunks.join('\n\n')}
+
+Ensure you cite the exact Bare Act sections, statutory essentials, and landmark case ratios found in the ground-truth material.
+
 Your task is to write a high-scoring exam answer for a BA LLB student studying the subject: "${subject || 'General Law'}".
 
 Topic/Question: "${question}"
@@ -155,7 +194,7 @@ ${structureInstructions}`;
     }
 
     const requestBody = {
-      model: "gemini-3.6-flash",
+      model: "gemini-2.5-flash",
       input: inputData
     };
 
