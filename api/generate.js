@@ -195,25 +195,38 @@ ${structureInstructions}`;
       ];
     }
 
-    const requestBody = {
-      model: "gemini-2.5-flash",
-      input: inputData
-    };
+    const modelsToTry = ["gemini-3.7-flash", "gemini-3.5-flash", "gemini-2.5-flash"];
+    let data = null;
+    let lastError = null;
 
-    const apiResponse = await fetch("https://generativelanguage.googleapis.com/v1beta/interactions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-goog-api-key": apiKey
-      },
-      body: JSON.stringify(requestBody)
-    });
+    for (const modelName of modelsToTry) {
+      try {
+        const requestBody = { model: modelName, input: inputData };
+        const apiResponse = await fetch("https://generativelanguage.googleapis.com/v1beta/interactions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-goog-api-key": apiKey
+          },
+          body: JSON.stringify(requestBody)
+        });
 
-    const data = await apiResponse.json();
+        const responseData = await apiResponse.json();
+        if (!apiResponse.ok) {
+          throw new Error(responseData.error?.message || `API Error with ${modelName}`);
+        }
+        
+        data = responseData;
+        break; // Success! Exit the fallback loop
+      } catch (err) {
+        console.warn(`Model ${modelName} failed, attempting fallback... Error:`, err.message);
+        lastError = err;
+      }
+    }
 
-    if (!apiResponse.ok) {
-      console.error("Gemini API Error:", data);
-      throw new Error(data.error?.message || "Failed to generate response.");
+    if (!data) {
+      console.error("All Gemini model fallbacks failed.");
+      throw lastError || new Error("Failed to generate response from all fallback models.");
     }
 
     const modelStep = data.steps?.find(s => s.type === 'model_output');
