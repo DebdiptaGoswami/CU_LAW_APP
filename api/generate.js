@@ -185,44 +185,26 @@ Formatting Rules:
 ${structureInstructions}`;
     }
 
-    let inputData = prompt;
+    const ai = new GoogleGenAI({ apiKey: apiKey });
+    
+    let contents = prompt;
     if (type === 'evaluate' && image) {
-      inputData = [
-        { type: "image", mime_type: "image/jpeg", data: image },
-        { type: "text", text: prompt }
+      contents = [
+        { inlineData: { mimeType: "image/jpeg", data: image } },
+        { text: prompt }
       ];
     }
 
-    const requestBody = {
+    const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
-      input: inputData
-    };
-
-    const apiResponse = await fetch("https://generativelanguage.googleapis.com/v1beta/interactions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-goog-api-key": apiKey
-      },
-      body: JSON.stringify(requestBody)
+      contents: contents
     });
 
-    const data = await apiResponse.json();
-
-    if (!apiResponse.ok) {
-      console.error("Gemini API Error:", data);
-      throw new Error(data.error?.message || "Failed to generate response.");
+    if (!response.text) {
+      throw new Error("No model output returned.");
     }
 
-    const modelStep = data.steps?.find(s => s.type === 'model_output');
-    if (!modelStep || !modelStep.content) {
-      throw new Error("No model output returned in the interaction steps.");
-    }
-
-    let text = modelStep.content
-      .filter(c => c.type === 'text')
-      .map(c => c.text)
-      .join('\\n');
+    let text = response.text;
 
     // Clean markdown code blocks from JSON outputs if AI added them
     if (type === 'evaluate' || type === 'flashcards') {
