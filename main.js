@@ -223,8 +223,10 @@ evaluatorBtn.addEventListener('click', async () => {
       body: JSON.stringify(payload)
     });
     
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error);
+    const resText = await res.text();
+    let data;
+    try { data = JSON.parse(resText); } catch(e) {}
+    if (!res.ok) throw new Error(data?.error || `Server error ${res.status}: ${resText.substring(0, 100)}`);
     
     const scorecard = JSON.parse(data.answer); // expects JSON string from API
     renderScorecard(scorecard);
@@ -314,8 +316,10 @@ document.getElementById('generateFlashcardsBtn').addEventListener('click', async
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ type: 'flashcards', subject, count })
     });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error);
+    const resText = await res.text();
+    let data;
+    try { data = JSON.parse(resText); } catch(e) {}
+    if (!res.ok) throw new Error(data?.error || `Server error ${res.status}: ${resText.substring(0, 100)}`);
     
     flashcardsDeck = JSON.parse(data.answer); // Expect array of JSON objects
     try {
@@ -382,8 +386,10 @@ generateBtn.addEventListener('click', async () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ type: 'answer', question, subject: document.getElementById('subject-select').value, marks: document.getElementById('marks-select').value }),
     });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error);
+    const resText = await res.text();
+    let data;
+    try { data = JSON.parse(resText); } catch(e) {}
+    if (!res.ok) throw new Error(data?.error || `Server error ${res.status}: ${resText.substring(0, 100)}`);
 
     currentRawMarkdown = data.answer;
     document.getElementById('outputContent').innerHTML = marked.parse(data.answer);
@@ -414,8 +420,10 @@ document.getElementById('searchBtn').addEventListener('click', async () => {
 
   try {
     const res = await fetch('/api/generate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'search', topic }) });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error);
+    const resText = await res.text();
+    let data;
+    try { data = JSON.parse(resText); } catch(e) {}
+    if (!res.ok) throw new Error(data?.error || `Server error ${res.status}: ${resText.substring(0, 100)}`);
 
     document.getElementById('searchOutputContent').innerHTML = marked.parse(data.answer);
     saveToHistory({ type: 'search', query: topic, answer: data.answer, timestamp: Date.now() });
@@ -536,8 +544,10 @@ document.getElementById('decodeBtn')?.addEventListener('click', async () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ type: 'decode', statute, section, rawText })
     });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error);
+    const resText = await res.text();
+    let data;
+    try { data = JSON.parse(resText); } catch(e) {}
+    if (!res.ok) throw new Error(data?.error || `Server error ${res.status}: ${resText.substring(0, 100)}`);
 
     currentDecoderMarkdown = data.answer;
     document.getElementById('decodeOutputContent').innerHTML = marked.parse(data.answer);

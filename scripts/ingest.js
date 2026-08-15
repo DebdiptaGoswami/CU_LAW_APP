@@ -14,8 +14,6 @@ const pinecone = new Pinecone({
   apiKey: process.env.PINECONE_API_KEY,
 });
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-
 const INDEX_NAME = 'cu-law-index';
 const KB_DIR = path.resolve(process.cwd(), 'knowledge_base');
 
@@ -94,13 +92,22 @@ async function main() {
       for (let i = 0; i < chunks.length; i++) {
         const textChunk = chunks[i];
         
-        // Generate embedding
-        const response = await ai.models.embedContent({
-          model: 'text-embedding-004',
-          contents: textChunk,
+        // Generate embedding using raw fetch to support specific API keys
+        const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:embedContent', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-goog-api-key': process.env.GEMINI_API_KEY
+          },
+          body: JSON.stringify({
+            content: { parts: [{ text: textChunk }] }
+          })
         });
         
-        const embedding = response.embeddings[0].values;
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error?.message || 'Failed to generate embedding');
+        
+        const embedding = data.embedding.values;
         
         // Upsert to Pinecone
         const vectorId = `${fileName.replace(/[^a-zA-Z0-9-]/g, '-')}-chunk-${i}`;
