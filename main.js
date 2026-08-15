@@ -53,6 +53,45 @@ const showToast = (message, duration = 3000) => {
   }, duration);
 };
 
+// Theme Toggle Logic
+const themeToggleBtn = document.getElementById('themeToggleBtn');
+const themeIconDark = document.getElementById('themeIconDark');
+const themeIconLight = document.getElementById('themeIconLight');
+
+if (themeToggleBtn) {
+  let savedTheme = 'dark';
+  try {
+    savedTheme = localStorage.getItem('cu_law_theme') || 'dark';
+  } catch (e) {
+    console.warn("localStorage not available", e);
+  }
+
+  if (savedTheme === 'light') {
+    document.documentElement.setAttribute('data-theme', 'light');
+    if (themeIconDark) themeIconDark.classList.add('hidden');
+    if (themeIconLight) themeIconLight.classList.remove('hidden');
+  }
+
+  themeToggleBtn.addEventListener('click', () => {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+
+    if (newTheme === 'light') {
+      document.documentElement.setAttribute('data-theme', 'light');
+      if (themeIconDark) themeIconDark.classList.add('hidden');
+      if (themeIconLight) themeIconLight.classList.remove('hidden');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+      if (themeIconDark) themeIconDark.classList.remove('hidden');
+      if (themeIconLight) themeIconLight.classList.add('hidden');
+    }
+
+    try {
+      localStorage.setItem('cu_law_theme', newTheme);
+    } catch (e) {}
+  });
+}
+
 
 
 // Tab Switching Logic
@@ -70,7 +109,10 @@ tabBtns.forEach(btn => {
 // -----------------------------------------------------------------------------
 // History Drawer
 // -----------------------------------------------------------------------------
-let historyData = JSON.parse(localStorage.getItem('cu_law_history') || '[]');
+let historyData = [];
+try {
+  historyData = JSON.parse(localStorage.getItem('cu_law_history') || '[]');
+} catch(e) {}
 const historyList = document.getElementById('history-list');
 const historyOverlay = document.getElementById('history-overlay');
 const historyDrawer = document.getElementById('history-drawer');
@@ -78,7 +120,9 @@ const historyDrawer = document.getElementById('history-drawer');
 const saveToHistory = (entry) => {
   historyData.unshift(entry);
   if (historyData.length > 5) historyData.pop();
-  localStorage.setItem('cu_law_history', JSON.stringify(historyData));
+  try {
+    localStorage.setItem('cu_law_history', JSON.stringify(historyData));
+  } catch(e) {}
   renderHistory();
 };
 
@@ -222,7 +266,10 @@ const renderScorecard = (data) => {
 // -----------------------------------------------------------------------------
 // Flashcards Logic
 // -----------------------------------------------------------------------------
-let flashcardsDeck = JSON.parse(localStorage.getItem('cu_law_flashcards') || '[]');
+let flashcardsDeck = [];
+try {
+  flashcardsDeck = JSON.parse(localStorage.getItem('cu_law_flashcards') || '[]');
+} catch (e) {}
 let fcIndex = 0;
 
 const fcContainer = document.getElementById('flashcardContainer');
@@ -271,7 +318,9 @@ document.getElementById('generateFlashcardsBtn').addEventListener('click', async
     if (!res.ok) throw new Error(data.error);
     
     flashcardsDeck = JSON.parse(data.answer); // Expect array of JSON objects
-    localStorage.setItem('cu_law_flashcards', JSON.stringify(flashcardsDeck));
+    try {
+      localStorage.setItem('cu_law_flashcards', JSON.stringify(flashcardsDeck));
+    } catch(e) {}
     fcIndex = 0;
     
     document.getElementById('flashcardViewer').classList.remove('hidden');
