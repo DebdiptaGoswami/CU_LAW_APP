@@ -344,15 +344,104 @@
             <div class="feature-card-header"></div>
             <div class="grid-2-col">
               <div class="input-group">
-                <label for="decode-statute">Statute / Subject Context</label>
-                <select id="decode-statute" class="text-input">
-                  <option value="Bharatiya Nyaya Sanhita (BNS)">Bharatiya Nyaya Sanhita (BNS)</option>
-                  <option value="Bharatiya Nagarik Suraksha Sanhita (BNSS)">Bharatiya Nagarik Suraksha Sanhita (BNSS)</option>
-                  <option value="Bharatiya Sakshya Adhiniyam (BSA)">Bharatiya Sakshya Adhiniyam (BSA)</option>
-                  <option value="Indian Contract Act, 1872">Indian Contract Act, 1872</option>
-                  <option value="Constitution of India">Constitution of India</option>
-                  <option value="Family Law (Hindu/Muslim Law)">Family Law (Hindu/Muslim Law)</option>
-                  <option value="Other / General">Other / General</option>
+                <label for="decoder-act-select">Statute / Subject Context</label>
+                <select id="decoder-act-select" class="custom-select text-input">
+                  <option value="" disabled selected>Select Bare Act / Statute</option>
+                  
+                  <!-- Semester 1 -->
+                  <optgroup label="Semester 1">
+                    <option value="Indian Contract Act, 1872">Indian Contract Act, 1872</option>
+                    <option value="Specific Relief Act, 1963">Specific Relief Act, 1963</option>
+                    <option value="Hindu Marriage Act, 1955">Hindu Marriage Act, 1955</option>
+                    <option value="Hindu Adoptions and Maintenance Act, 1956">Hindu Adoptions and Maintenance Act, 1956</option>
+                    <option value="Special Marriage Act, 1954">Special Marriage Act, 1954</option>
+                    <option value="Hindu Succession Act, 1956">Hindu Succession Act, 1956</option>
+                  </optgroup>
+
+                  <!-- Semester 2 -->
+                  <optgroup label="Semester 2">
+                    <option value="Indian Partnership Act, 1932">Indian Partnership Act, 1932</option>
+                    <option value="Limited Liability Partnership Act, 2008">Limited Liability Partnership Act, 2008</option>
+                    <option value="Sale of Goods Act, 1930">Sale of Goods Act, 1930</option>
+                    <option value="Dissolution of Muslim Marriages Act, 1939">Dissolution of Muslim Marriages Act, 1939</option>
+                    <option value="Muslim Women (Protection of Rights on Divorce) Act, 1986">Muslim Women (Protection of Rights on Divorce) Act, 1986</option>
+                    <option value="Indian Succession Act, 1925">Indian Succession Act, 1925</option>
+                    <option value="Divorce Act, 1869">Divorce Act, 1869</option>
+                  </optgroup>
+
+                  <!-- Semester 3 -->
+                  <optgroup label="Semester 3">
+                    <option value="Competition Act, 2002">Competition Act, 2002</option>
+                    <option value="Consumer Protection Act, 2019">Consumer Protection Act, 2019</option>
+                    <option value="Motor Vehicles Act, 1988">Motor Vehicles Act, 1988</option>
+                  </optgroup>
+
+                  <!-- Semester 4 -->
+                  <optgroup label="Semester 4">
+                    <option value="Constitution of India, 1950 (Part I - Arts 1-51A, 368)">Constitution of India, 1950 (Part I)</option>
+                    <option value="Bharatiya Nyaya Sanhita, 2023 (BNS)">Bharatiya Nyaya Sanhita, 2023 (BNS)</option>
+                    <option value="West Bengal Land Reforms Act, 1955">West Bengal Land Reforms Act, 1955</option>
+                    <option value="West Bengal Premises Tenancy Act, 1997">West Bengal Premises Tenancy Act, 1997</option>
+                    <option value="West Bengal Apartment Ownership Act, 1972">West Bengal Apartment Ownership Act, 1972</option>
+                  </optgroup>
+
+                  <!-- Semester 5 -->
+                  <optgroup label="Semester 5">
+                    <option value="Constitution of India, 1950 (Part II - Arts 52-395)">Constitution of India, 1950 (Part II)</option>
+                    <option value="Administrative Tribunals Act, 1985">Administrative Tribunals Act, 1985</option>
+                    <option value="Transfer of Property Act, 1882">Transfer of Property Act, 1882</option>
+                    <option value="Indian Easements Act, 1882">Indian Easements Act, 1882</option>
+                  </optgroup>
+
+                  <!-- Semester 6 -->
+                  <optgroup label="Semester 6">
+                    <option value="Bharatiya Nagarik Suraksha Sanhita, 2023 (BNSS)">Bharatiya Nagarik Suraksha Sanhita, 2023 (BNSS)</option>
+                    <option value="Code of Civil Procedure, 1908 (CPC)">Code of Civil Procedure, 1908 (CPC)</option>
+                    <option value="Limitation Act, 1963">Limitation Act, 1963</option>
+                    <option value="Copyright Act, 1957">Copyright Act, 1957</option>
+                  </optgroup>
+
+                  <!-- Semester 7 -->
+                  <optgroup label="Semester 7">
+                    <option value="Charter of the United Nations, 1945">Charter of the United Nations, 1945</option>
+                    <option value="Negotiable Instruments Act, 1881">Negotiable Instruments Act, 1881</option>
+                    <option value="Reserve Bank of India Act, 1934">Reserve Bank of India Act, 1934</option>
+                    <option value="Banking Regulation Act, 1949">Banking Regulation Act, 1949</option>
+                    <option value="Regional Rural Banks Act, 1976">Regional Rural Banks Act, 1976</option>
+                    <option value="Bharatiya Sakshya Adhiniyam, 2023 (BSA)">Bharatiya Sakshya Adhiniyam, 2023 (BSA)</option>
+                  </optgroup>
+
+                  <!-- Semester 8 -->
+                  <optgroup label="Semester 8">
+                    <option value="Protection of Human Rights Act, 1993">Protection of Human Rights Act, 1993</option>
+                    <option value="General Clauses Act, 1897">General Clauses Act, 1897</option>
+                    <option value="Industrial Relations Code, 2020">Industrial Relations Code, 2020</option>
+                    <option value="Code on Wages, 2019">Code on Wages, 2019</option>
+                  </optgroup>
+
+                  <!-- Semester 9 -->
+                  <optgroup label="Semester 9">
+                    <option value="Companies Act, 2013">Companies Act, 2013</option>
+                    <option value="Information Technology Act, 2000">Information Technology Act, 2000</option>
+                    <option value="Code on Social Security, 2020">Code on Social Security, 2020</option>
+                    <option value="Occupational Safety, Health and Working Conditions Code, 2020">Occupational Safety, Health and Working Conditions Code, 2020</option>
+                    <option value="Arbitration and Conciliation Act, 1996">Arbitration and Conciliation Act, 1996</option>
+                  </optgroup>
+
+                  <!-- Semester 10 -->
+                  <optgroup label="Semester 10">
+                    <option value="Income-tax Act, 1961">Income-tax Act, 1961</option>
+                    <option value="Central Goods and Services Tax Act, 2017 (GST)">Central Goods and Services Tax Act, 2017 (GST)</option>
+                    <option value="Environment (Protection) Act, 1986">Environment (Protection) Act, 1986</option>
+                    <option value="Air (Prevention and Control of Pollution) Act, 1981">Air (Prevention and Control of Pollution) Act, 1981</option>
+                    <option value="Water (Prevention and Control of Pollution) Act, 1974">Water (Prevention and Control of Pollution) Act, 1974</option>
+                    <option value="Indian Forest Act, 1927">Indian Forest Act, 1927</option>
+                    <option value="Prevention of Cruelty to Animals Act, 1960">Prevention of Cruelty to Animals Act, 1960</option>
+                    <option value="Wild Life (Protection) Act, 1972">Wild Life (Protection) Act, 1972</option>
+                    <option value="Biological Diversity Act, 2002">Biological Diversity Act, 2002</option>
+                    <option value="National Green Tribunal Act, 2010">National Green Tribunal Act, 2010</option>
+                    <option value="Public Liability Insurance Act, 1991">Public Liability Insurance Act, 1991</option>
+                  </optgroup>
                 </select>
               </div>
               <div class="input-group">

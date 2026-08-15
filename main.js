@@ -165,7 +165,7 @@ const loadHistoryItem = (index) => {
     renderScorecard(JSON.parse(item.answer));
   } else if (item.type === 'decode') {
     document.querySelector('[data-tab="tab-decoder"]').click();
-    if(item.statute) document.getElementById('decode-statute').value = item.statute;
+    if(item.statute) document.getElementById('decoder-act-select').value = item.statute;
     document.getElementById('decode-section').value = item.query;
     document.getElementById('decodeOutputContent').innerHTML = marked.parse(item.answer);
     document.getElementById('decodeOutputSection').classList.remove('hidden');
@@ -517,7 +517,7 @@ if(devOverlay) devOverlay.addEventListener('click', (e) => {
 let currentDecoderMarkdown = '';
 
 document.getElementById('decodeBtn')?.addEventListener('click', async () => {
-  const statute = document.getElementById('decode-statute').value;
+  const statute = document.getElementById('decoder-act-select').value;
   const section = document.getElementById('decode-section').value.trim();
   const rawText = document.getElementById('decode-raw').value.trim();
 
