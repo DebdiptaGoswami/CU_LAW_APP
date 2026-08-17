@@ -6,7 +6,7 @@ async function tryUrl(url) {
         "x-goog-api-key": process.env.GEMINI_API_KEY || "AIzaSy_fake_key"
       },
       body: JSON.stringify({
-        model: "gemini-3.6-flash",
+        model: "gemini-3.1-flash-lite",
         input: "test"
       })
     });
@@ -16,7 +16,7 @@ async function tryUrl(url) {
 async function test() {
     await tryUrl("https://generativelanguage.googleapis.com/v1beta2/interactions");
     await tryUrl("https://generativelanguage.googleapis.com/v1beta/interactions");
-    await tryUrl("https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:interactions");
+    await tryUrl("https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:interactions");
     await tryUrl("https://generativelanguage.googleapis.com/v1alpha/interactions");
     await tryUrl("https://generativelanguage.googleapis.com/v1/interactions");
 }

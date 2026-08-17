@@ -35,7 +35,7 @@ async function run() {
     
     console.log("Calling Gemini API...");
     const response = await ai.models.generateContent({
-      model: "gemini-3.6-flash",
+      model: "gemini-3.1-flash-lite",
       contents: prompt
     });
     

@@ -6,7 +6,7 @@ async function test() {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        model: "gemini-3.6-flash",
+        model: "gemini-3.1-flash-lite",
         input: "Tell me a joke"
       })
     });
