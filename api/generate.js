@@ -1,3 +1,5 @@
+export const maxDuration = 60; // Fixes Vercel 10s timeout limit
+
 import { Pinecone } from '@pinecone-database/pinecone';
 
 export default async function handler(req, res) {
