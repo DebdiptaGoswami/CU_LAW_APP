@@ -205,7 +205,7 @@ ${structureInstructions}`;
       ];
     }
 
-    const modelsToTry = ["gemini-3.1-flash-lite"];
+    const modelsToTry = ["gemini-3.7-flash"];
     let data = null;
     let lastError = null;
 
