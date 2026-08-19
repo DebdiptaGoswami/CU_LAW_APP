@@ -1,5 +1,7 @@
 import { marked } from 'marked';
+import mermaid from 'mermaid';
 
+mermaid.initialize({ startOnLoad: false, theme: 'default' });
 // -----------------------------------------------------------------------------
 // Subjects Data (Used across Generator, Evaluator, Flashcards)
 // -----------------------------------------------------------------------------
@@ -42,6 +44,27 @@ populateSubjects();
 // -----------------------------------------------------------------------------
 const body = document.body;
 const toast = document.getElementById('toast');
+
+const renderMermaid = async () => {
+  try {
+    const codeBlocks = document.querySelectorAll('.language-mermaid');
+    codeBlocks.forEach(block => {
+      const pre = block.parentElement;
+      if (pre && pre.tagName === 'PRE') {
+        const div = document.createElement('div');
+        div.className = 'mermaid';
+        div.textContent = block.textContent;
+        pre.parentNode.replaceChild(div, pre);
+      }
+    });
+    const mermaids = document.querySelectorAll('.mermaid');
+    if (mermaids.length > 0) {
+      await mermaid.run({ querySelector: '.mermaid' });
+    }
+  } catch (err) {
+    console.error("Mermaid error:", err);
+  }
+};
 
 const showToast = (message, duration = 3000) => {
   toast.textContent = message;
@@ -158,11 +181,13 @@ const loadHistoryItem = (index) => {
     document.querySelector('[data-tab="tab-generator"]').click();
     document.getElementById('question').value = item.query;
     document.getElementById('outputContent').innerHTML = marked.parse(item.answer);
+    renderMermaid();
     document.getElementById('outputSection').classList.remove('hidden');
   } else if (item.type === 'search') {
     document.querySelector('[data-tab="tab-search"]').click();
     document.getElementById('search-topic').value = item.query;
     document.getElementById('searchOutputContent').innerHTML = marked.parse(item.answer);
+    renderMermaid();
     document.getElementById('searchOutputSection').classList.remove('hidden');
   } else if (item.type === 'evaluate') {
     document.querySelector('[data-tab="tab-evaluator"]').click();
@@ -172,6 +197,7 @@ const loadHistoryItem = (index) => {
     if (item.statute) document.getElementById('decoder-act-select').value = item.statute;
     document.getElementById('decode-section').value = item.query;
     document.getElementById('decodeOutputContent').innerHTML = marked.parse(item.answer);
+    renderMermaid();
     document.getElementById('decodeOutputSection').classList.remove('hidden');
     currentDecoderMarkdown = item.answer;
   }
@@ -397,6 +423,7 @@ generateBtn.addEventListener('click', async () => {
 
     currentRawMarkdown = data.answer;
     document.getElementById('outputContent').innerHTML = marked.parse(data.answer);
+    await renderMermaid();
     saveToHistory({ type: 'answer', query: question, answer: data.answer, timestamp: Date.now() });
   } catch (error) {
     showToast(`Error: ${error.message}`);
@@ -430,6 +457,7 @@ document.getElementById('searchBtn').addEventListener('click', async () => {
     if (!res.ok) throw new Error(data?.error || `Server error ${res.status}: ${resText.substring(0, 100)}`);
 
     document.getElementById('searchOutputContent').innerHTML = marked.parse(data.answer);
+    await renderMermaid();
     saveToHistory({ type: 'search', query: topic, answer: data.answer, timestamp: Date.now() });
   } catch (error) {
     showToast(`Error: ${error.message}`);
@@ -555,6 +583,7 @@ document.getElementById('decodeBtn')?.addEventListener('click', async () => {
 
     currentDecoderMarkdown = data.answer;
     document.getElementById('decodeOutputContent').innerHTML = marked.parse(data.answer);
+    await renderMermaid();
     saveToHistory({ type: 'decode', query: section, statute: statute, answer: data.answer, timestamp: Date.now() });
   } catch (error) {
     showToast(`Error: ${error.message}`);

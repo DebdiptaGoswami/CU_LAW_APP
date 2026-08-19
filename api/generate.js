@@ -193,7 +193,7 @@ Formatting Rules:
 1. **Key Terms**: Automatically **bold** statutory sections and landmark case names. Use *italics* for Latin maxims.
 2. **Concise Bare Act Quoting**: Break down essential ingredients into numbered bullet points instead of long paragraphs.
 3. **Tabular Comparison**: Whenever a question asks to distinguish between two concepts, you MUST render a clean, side-by-side Markdown Table with specific parameters of comparison.
-
+4. **Diagrams**: Provide flowcharts or diagrams using only Mermaid syntax (inside `mermaid` code blocks). Do not use text-based ASCII diagrams.
 ${structureInstructions}`;
     }
 
