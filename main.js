@@ -92,7 +92,7 @@ if (themeToggleBtn) {
 
     try {
       localStorage.setItem('cu_law_theme', newTheme);
-    } catch (e) {}
+    } catch (e) { }
   });
 }
 
@@ -116,7 +116,7 @@ tabBtns.forEach(btn => {
 let historyData = [];
 try {
   historyData = JSON.parse(localStorage.getItem('cu_law_history') || '[]');
-} catch(e) {}
+} catch (e) { }
 const historyList = document.getElementById('history-list');
 const historyOverlay = document.getElementById('history-overlay');
 const historyDrawer = document.getElementById('history-drawer');
@@ -126,7 +126,7 @@ const saveToHistory = (entry) => {
   if (historyData.length > 5) historyData.pop();
   try {
     localStorage.setItem('cu_law_history', JSON.stringify(historyData));
-  } catch(e) {}
+  } catch (e) { }
   renderHistory();
 };
 
@@ -144,7 +144,7 @@ const renderHistory = () => {
     if (item.type === 'search') { icon = '🔍'; title = 'Search'; }
     else if (item.type === 'evaluate') { icon = '⚖️'; title = 'Eval'; }
     else if (item.type === 'decode') { icon = '📖'; title = 'Decoder'; }
-    
+
     card.innerHTML = `<h4>${icon} ${title}</h4><p><strong>Q:</strong> ${item.query}</p>`;
     card.addEventListener('click', () => loadHistoryItem(index));
     historyList.appendChild(card);
@@ -169,7 +169,7 @@ const loadHistoryItem = (index) => {
     renderScorecard(JSON.parse(item.answer));
   } else if (item.type === 'decode') {
     document.querySelector('[data-tab="tab-decoder"]').click();
-    if(item.statute) document.getElementById('decoder-act-select').value = item.statute;
+    if (item.statute) document.getElementById('decoder-act-select').value = item.statute;
     document.getElementById('decode-section').value = item.query;
     document.getElementById('decodeOutputContent').innerHTML = marked.parse(item.answer);
     document.getElementById('decodeOutputSection').classList.remove('hidden');
@@ -226,15 +226,15 @@ evaluatorBtn.addEventListener('click', async () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
-    
+
     const resText = await res.text();
     let data;
-    try { data = JSON.parse(resText); } catch(e) {}
+    try { data = JSON.parse(resText); } catch (e) { }
     if (!res.ok) throw new Error(data?.error || `Server error ${res.status}: ${resText.substring(0, 100)}`);
-    
+
     const scorecard = JSON.parse(data.answer); // expects JSON string from API
     renderScorecard(scorecard);
-    
+
     saveToHistory({ type: 'evaluate', query: question, answer: data.answer, timestamp: Date.now() });
   } catch (error) {
     console.error(error);
@@ -251,7 +251,7 @@ const renderScorecard = (data) => {
   // data = { score: 12, maxMarks: 16, grade: "A+", statProg: 80, caseProg: 75, structProg: 90, termProg: 85, strengths: [], weaknesses: [], tips: [] }
   document.getElementById('evalScore').textContent = `${data.score} / ${data.maxMarks}`;
   document.getElementById('evalGrade').textContent = data.grade;
-  
+
   setTimeout(() => {
     document.getElementById('prog-stat').style.width = `${data.statProg}%`;
     document.getElementById('prog-case').style.width = `${data.caseProg}%`;
@@ -265,7 +265,7 @@ const renderScorecard = (data) => {
   fillList('evalStrengths', data.strengths);
   fillList('evalWeaknesses', data.weaknesses);
   fillList('evalTips', data.tips);
-  
+
   document.getElementById('evaluatorDashboard').classList.remove('hidden');
 };
 
@@ -275,7 +275,7 @@ const renderScorecard = (data) => {
 let flashcardsDeck = [];
 try {
   flashcardsDeck = JSON.parse(localStorage.getItem('cu_law_flashcards') || '[]');
-} catch (e) {}
+} catch (e) { }
 let fcIndex = 0;
 
 const fcContainer = document.getElementById('flashcardContainer');
@@ -287,10 +287,10 @@ const renderFlashcard = () => {
   if (flashcardsDeck.length === 0) return;
   const card = flashcardsDeck[fcIndex];
   fcContainer.classList.remove('flipped'); // Reset flip state
-  
+
   document.getElementById('fcCurrent').textContent = fcIndex + 1;
   document.getElementById('fcTotal').textContent = flashcardsDeck.length;
-  
+
   setTimeout(() => {
     document.getElementById('fcFrontSubject').textContent = card.subject || 'Law';
     document.getElementById('fcFrontTopic').textContent = card.topic;
@@ -308,7 +308,7 @@ const renderFlashcard = () => {
 document.getElementById('generateFlashcardsBtn').addEventListener('click', async () => {
   const subject = document.getElementById('flashcard-subject').value;
   const count = document.getElementById('flashcard-count').value;
-  
+
   const btn = document.getElementById('generateFlashcardsBtn');
   btn.disabled = true;
   document.getElementById('fcBtnText').textContent = 'Generating Deck...';
@@ -322,15 +322,15 @@ document.getElementById('generateFlashcardsBtn').addEventListener('click', async
     });
     const resText = await res.text();
     let data;
-    try { data = JSON.parse(resText); } catch(e) {}
+    try { data = JSON.parse(resText); } catch (e) { }
     if (!res.ok) throw new Error(data?.error || `Server error ${res.status}: ${resText.substring(0, 100)}`);
-    
+
     flashcardsDeck = JSON.parse(data.answer); // Expect array of JSON objects
     try {
       localStorage.setItem('cu_law_flashcards', JSON.stringify(flashcardsDeck));
-    } catch(e) {}
+    } catch (e) { }
     fcIndex = 0;
-    
+
     document.getElementById('flashcardViewer').classList.remove('hidden');
     document.getElementById('flashcardSetupSection').classList.add('hidden');
     renderFlashcard();
@@ -347,8 +347,8 @@ document.getElementById('generateFlashcardsBtn').addEventListener('click', async
 fcContainer.addEventListener('click', () => fcContainer.classList.toggle('flipped'));
 fcFlipBtn.addEventListener('click', () => fcContainer.classList.toggle('flipped'));
 
-fcPrevBtn.addEventListener('click', () => { if (fcIndex > 0) { fcIndex--; renderFlashcard(); }});
-fcNextBtn.addEventListener('click', () => { if (fcIndex < flashcardsDeck.length - 1) { fcIndex++; renderFlashcard(); }});
+fcPrevBtn.addEventListener('click', () => { if (fcIndex > 0) { fcIndex--; renderFlashcard(); } });
+fcNextBtn.addEventListener('click', () => { if (fcIndex < flashcardsDeck.length - 1) { fcIndex++; renderFlashcard(); } });
 
 document.getElementById('newDeckBtn').addEventListener('click', () => {
   document.getElementById('flashcardViewer').classList.add('hidden');
@@ -377,7 +377,7 @@ document.getElementById('textCounter') && questionInput.addEventListener('input'
 generateBtn.addEventListener('click', async () => {
   const question = questionInput.value.trim();
   if (!question) return showToast('Please enter an exam question.');
-  
+
   generateBtn.disabled = true;
   document.querySelector('#generateBtn .btn-text').textContent = 'Generating...';
   document.getElementById('outputSection').classList.remove('hidden');
@@ -392,7 +392,7 @@ generateBtn.addEventListener('click', async () => {
     });
     const resText = await res.text();
     let data;
-    try { data = JSON.parse(resText); } catch(e) {}
+    try { data = JSON.parse(resText); } catch (e) { }
     if (!res.ok) throw new Error(data?.error || `Server error ${res.status}: ${resText.substring(0, 100)}`);
 
     currentRawMarkdown = data.answer;
@@ -415,7 +415,7 @@ generateBtn.addEventListener('click', async () => {
 document.getElementById('searchBtn').addEventListener('click', async () => {
   const topic = document.getElementById('search-topic').value.trim();
   if (!topic) return showToast('Please enter a legal topic.');
-  
+
   document.getElementById('searchBtn').disabled = true;
   document.getElementById('searchBtnText').textContent = 'Searching...';
   document.getElementById('searchOutputSection').classList.remove('hidden');
@@ -426,7 +426,7 @@ document.getElementById('searchBtn').addEventListener('click', async () => {
     const res = await fetch('/api/generate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'search', topic }) });
     const resText = await res.text();
     let data;
-    try { data = JSON.parse(resText); } catch(e) {}
+    try { data = JSON.parse(resText); } catch (e) { }
     if (!res.ok) throw new Error(data?.error || `Server error ${res.status}: ${resText.substring(0, 100)}`);
 
     document.getElementById('searchOutputContent').innerHTML = marked.parse(data.answer);
@@ -446,7 +446,7 @@ document.getElementById('searchBtn').addEventListener('click', async () => {
 document.getElementById('copyBtn').addEventListener('click', async () => {
   if (!currentRawMarkdown) return;
   const attribution = "\n\n---\n*Generated via CU Law Exam Engine | Designed by Debdipta Goswami*";
-  try { await navigator.clipboard.writeText(currentRawMarkdown + attribution); showToast('Markdown copied to clipboard!'); } catch (err) {}
+  try { await navigator.clipboard.writeText(currentRawMarkdown + attribution); showToast('Markdown copied to clipboard!'); } catch (err) { }
 });
 
 let isSpeaking = false;
@@ -466,7 +466,7 @@ document.getElementById('readAloudBtn').addEventListener('click', () => {
 document.getElementById('downloadPdfBtn').addEventListener('click', () => {
   const element = document.getElementById('outputContent');
   if (!element.innerHTML.trim()) return;
-  
+
   const wrapper = document.createElement('div');
   wrapper.innerHTML = element.innerHTML;
   wrapper.className = 'markdown-body';
@@ -474,15 +474,15 @@ document.getElementById('downloadPdfBtn').addEventListener('click', () => {
   wrapper.style.backgroundColor = '#fff';
   wrapper.style.padding = '20px';
   wrapper.style.fontSize = '12pt';
-  
+
   // Add attribution to PDF
   const attribution = document.createElement('div');
   attribution.innerHTML = '<hr><p style="text-align: center; font-style: italic; color: #666; font-size: 0.9rem;">Generated via CU Law Exam Engine | Designed by Debdipta Goswami</p>';
   wrapper.appendChild(attribution);
-  
+
   const headings = wrapper.querySelectorAll('h1, h2, h3, strong');
   headings.forEach(h => h.style.color = '#000');
-  
+
   const blockquotes = wrapper.querySelectorAll('blockquote');
   blockquotes.forEach(bq => {
     bq.style.color = '#333';
@@ -491,13 +491,13 @@ document.getElementById('downloadPdfBtn').addEventListener('click', () => {
   });
 
   const opt = {
-    margin:       0.75,
-    filename:     'CU_Law_Answer_Script.pdf',
-    image:        { type: 'jpeg', quality: 0.98 },
-    html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
-    jsPDF:        { unit: 'in', format: 'A4', orientation: 'portrait' }
+    margin: 0.75,
+    filename: 'CU_Law_Answer_Script.pdf',
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
+    jsPDF: { unit: 'in', format: 'A4', orientation: 'portrait' }
   };
-  
+
   html2pdf().set(opt).from(wrapper).save();
   showToast('PDF Downloading...');
 });
@@ -517,9 +517,9 @@ const closeDevModal = () => {
   setTimeout(() => devOverlay.classList.add('hidden'), 300);
 };
 
-if(openDevBtn) openDevBtn.addEventListener('click', openDevModal);
-if(closeDevBtn) closeDevBtn.addEventListener('click', closeDevModal);
-if(devOverlay) devOverlay.addEventListener('click', (e) => {
+if (openDevBtn) openDevBtn.addEventListener('click', openDevModal);
+if (closeDevBtn) closeDevBtn.addEventListener('click', closeDevModal);
+if (devOverlay) devOverlay.addEventListener('click', (e) => {
   if (e.target === devOverlay) closeDevModal();
 });
 
@@ -550,7 +550,7 @@ document.getElementById('decodeBtn')?.addEventListener('click', async () => {
     });
     const resText = await res.text();
     let data;
-    try { data = JSON.parse(resText); } catch(e) {}
+    try { data = JSON.parse(resText); } catch (e) { }
     if (!res.ok) throw new Error(data?.error || `Server error ${res.status}: ${resText.substring(0, 100)}`);
 
     currentDecoderMarkdown = data.answer;
@@ -571,7 +571,7 @@ document.getElementById('decodeBtn')?.addEventListener('click', async () => {
 document.getElementById('decodeCopyBtn')?.addEventListener('click', async () => {
   if (!currentDecoderMarkdown) return;
   const attribution = "\n\n---\n*Decoded via CU Law Exam Engine | Designed by Debdipta Goswami*";
-  try { await navigator.clipboard.writeText(currentDecoderMarkdown + attribution); showToast('Breakdown copied!'); } catch (err) {}
+  try { await navigator.clipboard.writeText(currentDecoderMarkdown + attribution); showToast('Breakdown copied!'); } catch (err) { }
 });
 
 let isDecoderSpeaking = false;

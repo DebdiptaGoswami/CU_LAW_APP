@@ -1,8 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-const pdf = require('pdf-parse');
+import { PDFParse } from 'pdf-parse';
 
 import { Pinecone } from '@pinecone-database/pinecone';
 import { GoogleGenAI } from '@google/genai';
@@ -19,6 +17,8 @@ const KB_DIR = path.resolve(process.cwd(), 'knowledge_base');
 
 const CHUNK_SIZE = 800; // ~800 words as token approximation
 const OVERLAP = 100;
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 function chunkText(text) {
   const words = text.split(/\s+/);
@@ -40,8 +40,10 @@ async function extractTextFromFile(filePath) {
     return fs.promises.readFile(filePath, 'utf-8');
   } else if (ext === '.pdf') {
     const dataBuffer = await fs.promises.readFile(filePath);
-    const data = await pdf(dataBuffer);
-    return data.text;
+    const parser = new PDFParse({ data: dataBuffer });
+    const result = await parser.getText();
+    await parser.destroy();
+    return result.text;
   }
   return '';
 }
@@ -92,38 +94,59 @@ async function main() {
       for (let i = 0; i < chunks.length; i++) {
         const textChunk = chunks[i];
         
-        // Generate embedding using raw fetch to support specific API keys
-        const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:embedContent', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-goog-api-key': process.env.GEMINI_API_KEY
-          },
-          body: JSON.stringify({
-            content: { parts: [{ text: textChunk }] }
-          })
-        });
-        
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error?.message || 'Failed to generate embedding');
-        
-        const embedding = data.embedding.values;
+        let embedding = null;
+        while (true) {
+          await sleep(2000); // 2-second delay to ensure we stay under 15 RPM
+          
+          // Generate embedding using raw fetch to support specific API keys
+          const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:embedContent', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-goog-api-key': process.env.GEMINI_API_KEY
+            },
+            body: JSON.stringify({
+              content: { parts: [{ text: textChunk }] },
+              outputDimensionality: 1024
+            })
+          });
+          
+          const data = await res.json();
+          
+          if (!res.ok) {
+            if (res.status === 429) {
+              console.log(`Rate limit exceeded (429). Waiting 5 seconds and retrying chunk ${i + 1}/${chunks.length}...`);
+              await sleep(5000);
+              continue; // Retry this exact chunk
+            }
+            throw new Error(data.error?.message || 'Failed to generate embedding');
+          }
+          
+          embedding = data.embedding.values;
+          break; // Success, exit retry loop
+        }
         
         // Upsert to Pinecone
         const vectorId = `${fileName.replace(/[^a-zA-Z0-9-]/g, '-')}-chunk-${i}`;
-        await index.upsert([{
-          id: vectorId,
-          values: embedding,
-          metadata: {
-            fileName,
-            subject,
-            textChunk
-          }
-        }]);
+        await index.upsert({
+          records: [{
+            id: vectorId,
+            values: embedding,
+            metadata: {
+              fileName,
+              subject,
+              textChunk
+            }
+          }]
+        });
         console.log(`Upserted chunk ${i + 1}/${chunks.length} for ${fileName}`);
-        
-        // Slight delay to avoid rate limits
-        await new Promise(resolve => setTimeout(resolve, 500));
+      }
+
+      if (fileName === 'Muslim Law Notes-1.pdf') {
+        console.log(`\n--- SUMMARY FOR Muslim Law Notes-1.pdf ---`);
+        console.log(`Total chunks created: ${chunks.length}`);
+        console.log(`Total chunks uploaded: ${chunks.length}`);
+        console.log(`------------------------------------------\n`);
       }
     } catch (err) {
       console.error(`Failed to process ${file}:`, err);
