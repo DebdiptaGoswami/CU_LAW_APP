@@ -685,33 +685,3 @@ footer {
   
   .score-badge { font-size: 32px; }
 }
-
-/* A4 PDF Preview Container */
-.a4-preview-wrapper {
-  background-color: var(--colors-canvas-soft);
-  padding: var(--spacing-lg) 0;
-  display: flex;
-  justify-content: center;
-  overflow-x: auto;
-}
-
-.a4-preview {
-  width: 210mm;
-  min-height: 297mm;
-  background: #ffffff;
-  padding: 20mm;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-  margin: 0 auto;
-  color: #000;
-  font-family: var(--font-family);
-  position: relative;
-  /* Prevent scaling issues on mobile for visual preview */
-  max-width: calc(100vw - 32px);
-  overflow-x: hidden;
-}
-
-/* Fix mermaid SVG rendering inside A4 */
-.mermaid svg {
-  max-width: 100% !important;
-  height: auto;
-}
